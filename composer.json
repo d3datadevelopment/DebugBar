@@ -1,0 +1,56 @@
+{
+  "name": "d3/debugbar",
+  "description": "add the DegugBar to OXID eShop",
+  "type": "oxideshop-module",
+  "keywords": [
+    "oxid",
+    "modules",
+    "eShop",
+    "d3",
+    "debugbar"
+  ],
+  "authors": [
+    {
+      "name": "D3 Data Development (Inh. Thomas Dartsch)",
+      "email": "info@shopmodule.com",
+      "homepage": "https://www.d3data.de",
+      "role": "Owner"
+    }
+  ],
+  "support": {
+    "email": "support@shopmodule.com"
+  },
+  "homepage": "https://www.oxidmodule.com/",
+  "license": [
+    "GPL-3.0-or-later"
+  ],
+  "require": {
+    "php": ">=7.3",
+    "oxid-esales/oxideshop-ce": "6.8 - 6.10",
+    "maximebf/debugbar": "^1.18",
+    "ajgl/composer-symlinker": "^0.3.1"
+  },
+  "require-dev": {
+    "php": "^7.4",
+    "phpunit/phpunit" : "^9.5",
+    "friendsofphp/php-cs-fixer": "^3.9",
+    "phpstan/phpstan": "^1.8"
+  },
+  "extra": {
+    "oxideshop": {
+      "blacklist-filter": [
+        "*.md",
+        "composer.json",
+        ".php-cs-fixer.php",
+        "*.xml",
+        "*.neon"
+      ],
+      "target-directory": "d3/debugbar"
+    }
+  },
+  "autoload": {
+    "psr-4": {
+      "D3\\DebugBar\\": "../../../source/modules/d3/debugbar"
+    }
+  }
+}
