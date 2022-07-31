@@ -18,7 +18,7 @@ namespace D3\DebugBar\Application\Component;
 use D3\DebugBar\Application\Models\Collectors\SmartyCollector;
 use DebugBar\Bridge\DoctrineCollector;
 use DebugBar\Bridge\MonologCollector;
-use DebugBar\DataCollector\PDO\PDOCollector;
+use DebugBar\DataCollector\TimeDataCollector;
 use DebugBar\DebugBarException;
 use DebugBar\JavascriptRenderer;
 use DebugBar\StandardDebugBar;
@@ -26,12 +26,15 @@ use Doctrine\DBAL\Logging\DebugStack;
 use OxidEsales\Eshop\Core\Controller\BaseController;
 use OxidEsales\Eshop\Core\DatabaseProvider;
 use OxidEsales\Eshop\Core\Exception\DatabaseConnectionException;
+use OxidEsales\Eshop\Core\Exception\StandardException;
 use OxidEsales\Eshop\Core\Registry;
 use ReflectionClass;
 use ReflectionException;
 
 class DebugBarComponent extends BaseController
 {
+    /** @var StandardDebugBar */
+    protected $debugBar;
     /** @var JavascriptRenderer */
     protected $debugBarRenderer;
 
@@ -57,6 +60,7 @@ class DebugBarComponent extends BaseController
 
             $debugbarRenderer = $debugbar->getJavascriptRenderer();
             $debugbarRenderer->setBaseUrl(Registry::getConfig()->getOutUrl() . 'debugbar');
+            $this->debugBar = $debugbar;
             $this->debugBarRenderer = $debugbarRenderer;
         }
     }
@@ -101,6 +105,7 @@ class DebugBarComponent extends BaseController
     public function render()
     {
         $this->getParent()->addTplParam('debugBarRenderer', $this->debugBarRenderer);
+        $this->getParent()->addTplParam('debugBarComponent', $this);
         return parent::render();
     }
 
@@ -130,5 +135,24 @@ class DebugBarComponent extends BaseController
         $debugbar->addCollector($this->getMonologCollector());
         $debugbar->addCollector($this->getDoctrineCollector());
         $debugbar->addCollector($this->getSmartyCollector());
+    }
+
+    public function addTimelineMessures()
+    {
+        /** @var TimeDataCollector $tCollector */
+        $tCollector = $this->debugBar['time'];
+
+        global $aStartTimes;
+        global $aProfileTimes;
+        global $executionCounts;
+        foreach ($aProfileTimes as $label => $recordedTime) {
+            for ($i = 0; $i < $executionCounts[$label]; $i++) {
+                $tCollector->addMeasure(
+                    $label,
+                    $aStartTimes[$label],
+                    $aStartTimes[$label] + $aProfileTimes[$label] / $executionCounts[$label]
+                );
+            }
+        }
     }
 }
