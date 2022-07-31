@@ -20,17 +20,11 @@ use OxidEsales\Eshop\Core\Registry;
 
 class ShopControl_DebugBar extends ShopControl_DebugBar_parent
 {
-    /**
-     * @param null $controllerKey
-     * @param null $function
-     * @param null $parameters
-     * @param null $viewsChain
-     */
-    public function start ($controllerKey = null, $function = null, $parameters = null, $viewsChain = null)
+    public function __construct()
     {
         $this->_d3AddDebugBarComponent();
 
-        parent::start( $controllerKey, $function, $parameters, $viewsChain);
+        parent::__construct();
     }
 
     /**
@@ -49,6 +43,17 @@ class ShopControl_DebugBar extends ShopControl_DebugBar_parent
         if (!in_array($d3CmpName, array_keys($userComponentNames))) {
             $userComponentNames[$d3CmpName] = $blDontUseCache;
             Registry::getConfig()->setConfigParam('aUserComponentNames', $userComponentNames);
+        }
+    }
+
+    public function __destruct()
+    {
+        if (!isAdmin()) {
+            /** @var DebugBarComponent $debugBarComponent */
+            $debugBarComponent = Registry::getConfig()->getActiveView()->getComponent(DebugBarComponent::class);
+            echo $debugBarComponent->getRenderer()->renderHead();
+            $debugBarComponent->addTimelineMessures();
+            echo $debugBarComponent->getRenderer()->render();
         }
     }
 }

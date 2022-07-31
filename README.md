@@ -38,6 +38,10 @@ php composer require d3/modulename:^2.0
 
 Aktivieren Sie das Modul im Shopadmin unter "Erweiterungen -> Module".
 
+```
+include './modules/d3/debugbar/Modules/functions.php';
+```
+
 ## Changelog
 
 Siehe [CHANGELOG](CHANGELOG.md) für weitere Informationen.
