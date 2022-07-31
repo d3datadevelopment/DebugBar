@@ -15,6 +15,7 @@ declare(strict_types=1);
 
 namespace D3\DebugBar\Application\Component;
 
+use D3\DebugBar\Application\Models\Collectors\SmartyCollector;
 use DebugBar\Bridge\DoctrineCollector;
 use DebugBar\Bridge\MonologCollector;
 use DebugBar\DataCollector\PDO\PDOCollector;
@@ -51,10 +52,8 @@ class DebugBarComponent extends BaseController
 
         if (false === isAdmin()) {
             $debugbar = new StandardDebugBar();
-            $debugbar->addCollector(new PDOCollector());
 
-            $debugbar->addCollector($this->getMonologCollector());
-            $debugbar->addCollector($this->getDoctrineCollector());
+            $this->addCollectors($debugbar);
 
             $debugbarRenderer = $debugbar->getJavascriptRenderer();
             $debugbarRenderer->setBaseUrl(Registry::getConfig()->getOutUrl() . 'debugbar');
@@ -89,6 +88,14 @@ class DebugBarComponent extends BaseController
     }
 
     /**
+     * @return SmartyCollector
+     */
+    public function getSmartyCollector(): SmartyCollector
+    {
+        return new SmartyCollector(Registry::getUtilsView()->getSmarty());
+    }
+
+    /**
      * @return string|null
      */
     public function render()
@@ -109,5 +116,19 @@ class DebugBarComponent extends BaseController
         $property = $reflection->getProperty($propName);
         $property->setAccessible(true);
         return $property->getValue($object);
+    }
+
+    /**
+     * @param StandardDebugBar $debugbar
+     * @return void
+     * @throws DatabaseConnectionException
+     * @throws DebugBarException
+     * @throws ReflectionException
+     */
+    public function addCollectors(StandardDebugBar $debugbar): void
+    {
+        $debugbar->addCollector($this->getMonologCollector());
+        $debugbar->addCollector($this->getDoctrineCollector());
+        $debugbar->addCollector($this->getSmartyCollector());
     }
 }
