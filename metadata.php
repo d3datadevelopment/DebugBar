@@ -42,11 +42,5 @@ $aModule = [
     'events'      => [],
     'templates'   => [],
     'settings'    => [],
-    'blocks'      => [
-        [
-            'template'  => 'layout/footer.tpl',
-            'block'     => 'footer_main',
-            'file'      => 'Application/views/blocks/layout/footer_main_debugbar.tpl'
-        ]
-    ],
+    'blocks'      => [],
 ];
