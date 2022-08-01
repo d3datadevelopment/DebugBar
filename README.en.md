@@ -7,11 +7,11 @@ The debug bar enables the display of relevant debug information in the shop fron
 
 ## Table of content
 
-- [Installation](#installation)´
+- [Installation](#installation)
 - [Changelog](#changelog)
 - [Contributing](#contributing)
-- [License](#license)´
-- [Further licences and terms of use](#further-licences-and-terms-of-use)´
+- [License](#license)
+- [Further licences and terms of use](#further-licences-and-terms-of-use)
 
 ## Installation
 
@@ -35,6 +35,8 @@ Open a command line and navigate to the root directory of the shop (parent direc
 ```bash
 php composer require d3/modulename:^2.0
 ``` 
+
+If necessary, please confirm that you allow `composer-symlinker` to execute code.
 
 Activate the module in Shopadmin under "Extensions -> Modules".
 
