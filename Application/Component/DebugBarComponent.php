@@ -99,16 +99,6 @@ class DebugBarComponent extends BaseController
     }
 
     /**
-     * @return string|null
-     */
-    public function render()
-    {
-        $this->getParent()->addTplParam('debugBarRenderer', $this->debugBarRenderer);
-        $this->getParent()->addTplParam('debugBarComponent', $this);
-        return parent::render();
-    }
-
-    /**
      * @param  $object
      * @param $propName
      * @return mixed
@@ -148,5 +138,13 @@ class DebugBarComponent extends BaseController
         $property = $reflection->getProperty('collectors');
         $property->setAccessible(true);
         $property->setValue($this->debugBar, $collectors);
+    }
+
+    /**
+     * @return JavascriptRenderer
+     */
+    public function getRenderer(): JavascriptRenderer
+    {
+        return $this->debugBarRenderer;
     }
 }

@@ -51,9 +51,9 @@ class ShopControl_DebugBar extends ShopControl_DebugBar_parent
         if (!isAdmin()) {
             /** @var DebugBarComponent $debugBarComponent */
             $debugBarComponent = Registry::getConfig()->getActiveView()->getComponent(DebugBarComponent::class);
-            echo $debugBarComponent->debugBarRenderer->renderHead();
+            echo $debugBarComponent->getRenderer()->renderHead();
             $debugBarComponent->addTimelineMessures();
-            echo $debugBarComponent->debugBarRenderer->render();
+            echo $debugBarComponent->getRenderer()->render();
         }
     }
 }
