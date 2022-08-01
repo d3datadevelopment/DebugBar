@@ -25,6 +25,12 @@ Bitte tragen Sie den folgenden Abschnitt in die `composer.json` Ihres Projektes 
       "maximebf/debugbar": {
         "src/DebugBar/Resources": "source/out/debugbar"
       }
+    },
+    "enable-patching": "true",
+    "patches": {
+      "oxid-esales/oxideshop-ce": {
+        "Add overridable functions for advanced profiling in Debug Bar": "https://git.d3data.de/D3Public/DebugBar/raw/branch/patches/overridablefunctions.patch"
+      }
     }
   }
 ```

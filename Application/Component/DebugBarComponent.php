@@ -33,9 +33,9 @@ use ReflectionException;
 class DebugBarComponent extends BaseController
 {
     /** @var StandardDebugBar */
-    public $debugBar;
+    protected $debugBar;
     /** @var JavascriptRenderer */
-    public $debugBarRenderer;
+    protected $debugBarRenderer;
 
     /**
      * Marking object as component
