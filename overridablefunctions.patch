@@ -1,0 +1,25 @@
+From 28a69c0baf87543ab19d67abe729f8e8f05644f1 Mon Sep 17 00:00:00 2001
+From: Daniel Seifert <git@daniel-seifert.com>
+Date: Mon, 1 Aug 2022 22:19:00 +0200
+Subject: [PATCH 1/1] add debug bar dependend overridable functions
+
+---
+ source/modules/functions.php | 6 ++++++
+ 1 file changed, 6 insertions(+)
+ create mode 100644 source/modules/functions.php
+
+diff --git a/source/modules/functions.php b/source/modules/functions.php
+new file mode 100644
+index 000000000..5bd5ada86
+--- /dev/null
++++ b/source/modules/functions.php
+@@ -0,0 +1,6 @@
++<?php
++
++$filePath = './modules/d3/debugbar/Modules/functions.php';
++if (file_exists($filePath)) {
++    include $filePath;
++}
+-- 
+2.26.1.windows.1
+
