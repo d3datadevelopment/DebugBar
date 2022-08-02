@@ -15,6 +15,8 @@ declare(strict_types=1);
 
 namespace D3\DebugBar\Application\Component;
 
+use D3\DebugBar\Application\Core\LoggerCascade;
+use D3\DebugBar\Application\Core\LoggerNotSetException;
 use D3\DebugBar\Application\Models\Collectors\SmartyCollector;
 use D3\DebugBar\Application\Models\TimeDataCollectorHandler;
 use DebugBar\Bridge\DoctrineCollector;
@@ -23,6 +25,7 @@ use DebugBar\DebugBarException;
 use DebugBar\JavascriptRenderer;
 use DebugBar\StandardDebugBar;
 use Doctrine\DBAL\Logging\DebugStack;
+use Monolog\Logger;
 use OxidEsales\Eshop\Core\Controller\BaseController;
 use OxidEsales\Eshop\Core\DatabaseProvider;
 use OxidEsales\Eshop\Core\Exception\DatabaseConnectionException;
@@ -70,8 +73,19 @@ class DebugBarComponent extends BaseController
      */
     public function getMonologCollector(): MonologCollector
     {
-        $loggerWrapper = Registry::getLogger();
-        $monolog = $this->getNonPublicProperty($loggerWrapper, 'logger');
+        $logger = Registry::getLogger();
+
+        try {
+            if ( $logger instanceof LoggerCascade ) {
+                $monolog = $logger->getLogger( LoggerCascade::DEBUGBAR_LOGGER );
+            } else {
+                /** @var Logger $monolog */
+                $monolog = $this->getNonPublicProperty( $logger, 'logger' );
+            }
+        } catch ( LoggerNotSetException $e ) {
+            $monolog = new Logger( 'nullLogger' );
+        }
+
         return new MonologCollector($monolog);
     }
 

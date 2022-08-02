@@ -13,13 +13,21 @@
 
 declare(strict_types=1);
 
+use D3\DebugBar\Application\Core\LoggerCascade;
+use D3\DebugBar\Application\Models\TimeDataCollectorHandler;
+use Monolog\Logger;
+use OxidEsales\EshopCommunity\Internal\Container\ContainerFactory;
+use Psr\Container\ContainerExceptionInterface;
+use Psr\Container\NotFoundExceptionInterface;
+use Psr\Log\LoggerInterface;
+
 function startProfile($sProfileName)
 {
     $trace = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS);
     $trace[0] = $sProfileName;
     $hash = md5(serialize($trace)).'-'.$sProfileName;
 
-    $timeDataCollector = \D3\DebugBar\Application\Models\TimeDataCollectorHandler::getInstance();
+    $timeDataCollector = TimeDataCollectorHandler::getInstance();
     $timeDataCollector->startMeasure($hash, $sProfileName);
 
     global $aStartTimes;
@@ -40,7 +48,7 @@ function stopProfile($sProfileName)
     $trace[0] = $sProfileName;
     $hash = md5(serialize($trace)).'-'.$sProfileName;
 
-    $timeDataCollector = \D3\DebugBar\Application\Models\TimeDataCollectorHandler::getInstance();
+    $timeDataCollector = TimeDataCollectorHandler::getInstance();
     $timeDataCollector->stopMeasure($hash);
 
 
@@ -54,4 +62,21 @@ function stopProfile($sProfileName)
     }
     $executionCounts[$sProfileName]++;
     $aStartTimes[$sProfileName] = microtime(true);
+}
+
+/**
+ * @return LoggerCascade
+ * @throws ContainerExceptionInterface
+ * @throws NotFoundExceptionInterface
+ */
+function getLogger(): LoggerCascade
+{
+    $container = ContainerFactory::getInstance()->getContainer();
+    $logger = $container->get( LoggerInterface::class);
+
+    $cascade = new LoggerCascade();
+    $cascade->addLogger($logger, LoggerCascade::OXID_LOGGER);
+    $cascade->addLogger(new Logger(LoggerCascade::DEBUGBAR_LOGGER), LoggerCascade::DEBUGBAR_LOGGER);
+
+    return $cascade;
 }
