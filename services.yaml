@@ -1,0 +1,9 @@
+services:
+  _defaults:
+    autowire: true
+    public: false
+
+  Psr\Log\LoggerInterface:
+    class: Monolog\Logger
+    factory: 'OxidEsales\EshopCommunity\Internal\Framework\Logger\Factory\LoggerFactoryInterface:create'
+    public: true

@@ -15,8 +15,6 @@ declare(strict_types=1);
 
 namespace D3\DebugBar\Application\Component;
 
-use D3\DebugBar\Application\Core\LoggerCascade;
-use D3\DebugBar\Application\Core\LoggerNotSetException;
 use D3\DebugBar\Application\Models\Collectors\SmartyCollector;
 use D3\DebugBar\Application\Models\TimeDataCollectorHandler;
 use DebugBar\Bridge\DoctrineCollector;
@@ -69,23 +67,11 @@ class DebugBarComponent extends BaseController
 
     /**
      * @return MonologCollector
-     * @throws ReflectionException
      */
     public function getMonologCollector(): MonologCollector
     {
-        $logger = Registry::getLogger();
-
-        try {
-            if ( $logger instanceof LoggerCascade ) {
-                $monolog = $logger->getLogger( LoggerCascade::DEBUGBAR_LOGGER );
-            } else {
-                /** @var Logger $monolog */
-                $monolog = $this->getNonPublicProperty( $logger, 'logger' );
-            }
-        } catch ( LoggerNotSetException $e ) {
-            $monolog = new Logger( 'nullLogger' );
-        }
-
+        /** @var Logger $monolog */
+        $monolog = Registry::getLogger();
         return new MonologCollector($monolog);
     }
 
@@ -109,7 +95,8 @@ class DebugBarComponent extends BaseController
      */
     public function getSmartyCollector(): SmartyCollector
     {
-        return new SmartyCollector(Registry::getUtilsView()->getSmarty());
+        $smarty = Registry::getUtilsView()->getSmarty();
+        return new SmartyCollector($smarty);
     }
 
     /**
