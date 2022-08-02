@@ -8,4 +8,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [1.0.0.0](https://git.d3data.de/D3Public/DebugBar/releases/tag/1.0.0.0) - 2022-07-30
 ### Added
-- generate debug bar instance with Monolog collector and Doctrine collector
+- generate debug bar instance with 
+    - Request data colletor
+    - Monolog log messages collector
+    - Doctrine database queries collector
+    - Smarty variables collector
+    - Timeline profiling collector
+    - Collector for freely definable debug messages 

@@ -49,6 +49,21 @@ Aktivieren Sie das Modul im Shopadmin unter "Erweiterungen -> Module".
 ```
 include './modules/d3/debugbar/Modules/functions.php';
 ```
+## Verwendung
+
+Die DebugBar stellt folgende Tabs dar:
+- Messages
+  kann individuelle Debugausgaben enthalten. Die Nachrichten können innerhalb des PHP-Codes mit `debugVar($message)` gesetzt werden und entspricht der OXID-Funktion `dumpVar(...)`.
+- Request
+  zeigt alle Angaben aus GET- und POST-Requests, sowie Session-, Cookie- und Servervariablen
+- Timeline
+  stellt alle mit `startProfile` und `stopProfile` definierten Bereiche mit einzelner und summierter Ausführungszeit sowie als Wasserfalldiagramm dar
+- Monolog
+  listet alle an den Monolog Logger übergebenen Lognachrichten
+- Database
+  zeigt alle zur Generierung der aktuellen Seite nötigen Datenbankabfragen
+- Smarty
+  listet alle Smarty-Variablen, die auf der aktuellen Shopseite zur Verfügung stehen
 
 ## Changelog
 
