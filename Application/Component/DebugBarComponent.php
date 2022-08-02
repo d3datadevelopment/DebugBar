@@ -16,9 +16,9 @@ declare(strict_types=1);
 namespace D3\DebugBar\Application\Component;
 
 use D3\DebugBar\Application\Models\Collectors\SmartyCollector;
+use D3\DebugBar\Application\Models\TimeDataCollectorHandler;
 use DebugBar\Bridge\DoctrineCollector;
 use DebugBar\Bridge\MonologCollector;
-use DebugBar\DataCollector\TimeDataCollector;
 use DebugBar\DebugBarException;
 use DebugBar\JavascriptRenderer;
 use DebugBar\StandardDebugBar;
@@ -26,7 +26,6 @@ use Doctrine\DBAL\Logging\DebugStack;
 use OxidEsales\Eshop\Core\Controller\BaseController;
 use OxidEsales\Eshop\Core\DatabaseProvider;
 use OxidEsales\Eshop\Core\Exception\DatabaseConnectionException;
-use OxidEsales\Eshop\Core\Exception\StandardException;
 use OxidEsales\Eshop\Core\Registry;
 use ReflectionClass;
 use ReflectionException;
@@ -100,16 +99,6 @@ class DebugBarComponent extends BaseController
     }
 
     /**
-     * @return string|null
-     */
-    public function render()
-    {
-        $this->getParent()->addTplParam('debugBarRenderer', $this->debugBarRenderer);
-        $this->getParent()->addTplParam('debugBarComponent', $this);
-        return parent::render();
-    }
-
-    /**
      * @param  $object
      * @param $propName
      * @return mixed
@@ -137,22 +126,25 @@ class DebugBarComponent extends BaseController
         $debugbar->addCollector($this->getSmartyCollector());
     }
 
-    public function addTimelineMessures()
+    /**
+     * @return void
+     */
+    public function addTimelineMessures(): void
     {
-        /** @var TimeDataCollector $tCollector */
-        $tCollector = $this->debugBar['time'];
+        $collectors = $this->debugBar->getCollectors();
+        $collectors['time'] = TimeDataCollectorHandler::getInstance();
 
-        global $aStartTimes;
-        global $aProfileTimes;
-        global $executionCounts;
-        foreach ($aProfileTimes as $label => $recordedTime) {
-            for ($i = 0; $i < $executionCounts[$label]; $i++) {
-                $tCollector->addMeasure(
-                    $label,
-                    $aStartTimes[$label],
-                    $aStartTimes[$label] + $aProfileTimes[$label] / $executionCounts[$label]
-                );
-            }
-        }
+        $reflection = new ReflectionClass($this->debugBar);
+        $property = $reflection->getProperty('collectors');
+        $property->setAccessible(true);
+        $property->setValue($this->debugBar, $collectors);
+    }
+
+    /**
+     * @return JavascriptRenderer
+     */
+    public function getRenderer(): JavascriptRenderer
+    {
+        return $this->debugBarRenderer;
     }
 }
