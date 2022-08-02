@@ -50,7 +50,7 @@ class ShopControl_DebugBar extends ShopControl_DebugBar_parent
     {
         if (!isAdmin()) {
             /** @var DebugBarComponent $debugBarComponent */
-            $activeView =  Registry::getConfig()->getActiveView();
+            $activeView =  Registry::getConfig()->getTopActiveView();
             if ($activeView &&
                 $debugBarComponent = $activeView->getComponent(DebugBarComponent::class)
             ) {

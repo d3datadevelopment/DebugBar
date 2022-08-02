@@ -13,7 +13,10 @@
 
 declare(strict_types=1);
 
+use D3\DebugBar\Application\Component\DebugBarComponent;
 use D3\DebugBar\Application\Models\TimeDataCollectorHandler;
+use DebugBar\DataCollector\MessagesCollector;
+use OxidEsales\Eshop\Core\Registry;
 
 function startProfile($sProfileName)
 {
@@ -56,4 +59,28 @@ function stopProfile($sProfileName)
     }
     $executionCounts[$sProfileName]++;
     $aStartTimes[$sProfileName] = microtime(true);
+}
+
+function debugVar($mVar, $blToFile = false)
+{
+    if ($blToFile) {
+        $out = var_export($mVar, true);
+        $f = fopen(Registry::getConfig()->getConfigParam('sCompileDir') . "/vardump.txt", "a");
+        fwrite($f, $out);
+        fclose($f);
+    } else {
+        if (!isAdmin()) {
+            $activeView = Registry::getConfig()->getTopActiveView();
+            /** @var DebugBarComponent $debugBarComponent */
+            $debugBarComponent = $activeView->getComponent(DebugBarComponent::class);
+            /** @var MessagesCollector $messages */
+            $messages = $debugBarComponent->getDebugBar()->getCollector('messages');
+            $trace = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS);
+            //$location = $trace[1]['class'] . '::' . $trace[1]['function']. '(' . $trace[0]['line'] . ')';
+            $location = $trace[1]['class'] . '::' . $trace[1]['function'];
+            $messages->addMessage($mVar, $location);
+        } else {
+            dumpVar($mVar, $blToFile);
+        }
+    }
 }

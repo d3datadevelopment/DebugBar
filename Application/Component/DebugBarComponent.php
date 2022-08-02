@@ -142,6 +142,14 @@ class DebugBarComponent extends BaseController
     }
 
     /**
+     * @return StandardDebugBar
+     */
+    public function getDebugBar(): StandardDebugBar
+    {
+        return $this->debugBar;
+    }
+
+    /**
      * @return JavascriptRenderer
      */
     public function getRenderer(): JavascriptRenderer
