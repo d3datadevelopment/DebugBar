@@ -22,6 +22,7 @@ use DebugBar\Bridge\MonologCollector;
 use DebugBar\DebugBarException;
 use DebugBar\JavascriptRenderer;
 use DebugBar\StandardDebugBar;
+use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Logging\DebugStack;
 use Monolog\Logger;
 use OxidEsales\Eshop\Core\Controller\BaseController;
@@ -85,6 +86,7 @@ class DebugBarComponent extends BaseController
     {
         $db = DatabaseProvider::getDb();
         $debugStack = new DebugStack();
+        /** @var Connection $connection */
         $connection = $this->getNonPublicProperty($db, 'connection');
         $connection->getConfiguration()->setSQLLogger($debugStack);
         return new DoctrineCollector($debugStack);
@@ -100,12 +102,13 @@ class DebugBarComponent extends BaseController
     }
 
     /**
-     * @param  $object
-     * @param $propName
+     * @param object $object
+     * @param string $propName
+     *
      * @return mixed
      * @throws ReflectionException
      */
-    protected function getNonPublicProperty($object, $propName)
+    protected function getNonPublicProperty(object $object, string $propName)
     {
         $reflection = new ReflectionClass($object);
         $property = $reflection->getProperty($propName);

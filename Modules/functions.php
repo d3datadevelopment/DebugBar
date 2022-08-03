@@ -16,9 +16,14 @@ declare(strict_types=1);
 use D3\DebugBar\Application\Component\DebugBarComponent;
 use D3\DebugBar\Application\Models\TimeDataCollectorHandler;
 use DebugBar\DataCollector\MessagesCollector;
+use DebugBar\DebugBarException;
 use OxidEsales\Eshop\Core\Registry;
 
-function startProfile($sProfileName)
+/**
+ * @param $sProfileName
+ * @return void
+ */
+function startProfile(string $sProfileName): void
 {
     $trace = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS);
     $trace[0] = $sProfileName;
@@ -39,7 +44,13 @@ function startProfile($sProfileName)
     $aStartTimes[$sProfileName] = microtime(true);
 }
 
-function stopProfile($sProfileName)
+/**
+ * @param string $sProfileName
+ *
+ * @return void
+ * @throws DebugBarException
+ */
+function stopProfile(string $sProfileName): void
 {
     $trace = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS);
     $trace[0] = $sProfileName;
@@ -61,13 +72,22 @@ function stopProfile($sProfileName)
     $aStartTimes[$sProfileName] = microtime(true);
 }
 
-function debugVar($mVar, $blToFile = false)
+/**
+ * @param mixed $mVar
+ * @param bool $blToFile
+ *
+ * @throws DebugBarException
+ * @return void
+ */
+function debugVar($mVar, bool $blToFile = false): void
 {
     if ($blToFile) {
         $out = var_export($mVar, true);
         $f = fopen(Registry::getConfig()->getConfigParam('sCompileDir') . "/vardump.txt", "a");
-        fwrite($f, $out);
-        fclose($f);
+        if (is_resource($f)) {
+            fwrite( $f, $out );
+            fclose( $f );
+        }
     } else {
         if (!isAdmin()) {
             $activeView = Registry::getConfig()->getTopActiveView();

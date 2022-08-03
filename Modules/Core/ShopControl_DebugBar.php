@@ -16,6 +16,7 @@ declare(strict_types=1);
 namespace D3\DebugBar\Modules\Core;
 
 use D3\DebugBar\Application\Component\DebugBarComponent;
+use OxidEsales\Eshop\Application\Controller\FrontendController;
 use OxidEsales\Eshop\Core\Registry;
 
 class ShopControl_DebugBar extends ShopControl_DebugBar_parent
@@ -49,11 +50,11 @@ class ShopControl_DebugBar extends ShopControl_DebugBar_parent
     public function __destruct()
     {
         if (!isAdmin()) {
-            /** @var DebugBarComponent $debugBarComponent */
+            /** @var FrontendController $activeView */
             $activeView =  Registry::getConfig()->getTopActiveView();
-            if ($activeView &&
-                $debugBarComponent = $activeView->getComponent(DebugBarComponent::class)
-            ) {
+            /** @var DebugBarComponent|null $debugBarComponent */
+            $debugBarComponent = $activeView->getComponent(DebugBarComponent::class);
+            if ($debugBarComponent) {
                 echo $debugBarComponent->getRenderer()->renderHead();
                 $debugBarComponent->addTimelineMessures();
                 echo $debugBarComponent->getRenderer()->render();

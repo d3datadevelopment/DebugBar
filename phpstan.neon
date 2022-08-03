@@ -1,9 +1,12 @@
 parameters:
+    paths:
+        - .
     scanFiles:
         - IntelliSenseHelper.php
         - ../../oxid-esales/oxideshop-ce/source/oxfunctions.php
     level: 9
-    phpVersion: 70100
+    phpVersion: 70300
     checkMissingIterableValueType: false
     ignoreErrors:
-        - '#Psr\\Container\\ContainerExceptionInterface is not subtype of Throwable#'
+        - '#setConfigParam\(\) expects string, array given.#'
+        - '#Offset .* does not exist on array{function: .*}.#'
