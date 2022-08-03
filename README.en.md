@@ -5,6 +5,8 @@
 
 The debug bar enables the display of relevant debug information in the shop frontend.
 
+![screenshot](screenshot.jpg "Screenshot")
+
 ## Table of content
 
 - [Installation](#installation)

@@ -5,6 +5,8 @@
 
 Die Debug Bar ermöglicht die Darstellung relevanter Debuginformationen im Shopfrontend.
 
+![screenshot](screenshot.jpg "Screenshot")
+
 ## Inhaltsverzeichnis
 
 - [Installation](#installation)

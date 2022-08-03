@@ -44,7 +44,8 @@
         "composer.json",
         ".php-cs-fixer.php",
         "*.xml",
-        "*.neon"
+        "*.neon",
+        "*.jpg"
       ],
       "target-directory": "d3/debugbar"
     }
