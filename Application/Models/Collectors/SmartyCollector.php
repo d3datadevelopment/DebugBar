@@ -17,6 +17,7 @@ namespace D3\DebugBar\Application\Models\Collectors;
 
 use DebugBar\DataCollector\DataCollector;
 use DebugBar\DataCollector\Renderable;
+use OxidEsales\Eshop\Core\Registry;
 use Smarty;
 
 class SmartyCollector extends DataCollector implements Renderable
@@ -67,7 +68,7 @@ class SmartyCollector extends DataCollector implements Renderable
      */
     public function collect(): array
     {
-        $data = [];
+        $data = ['current view template' => Registry::getConfig()->getTopActiveView()->getTemplateName()];
 
         $vars = $this->smarty->get_template_vars();
 
