@@ -15,6 +15,7 @@ declare(strict_types=1);
 
 namespace D3\DebugBar\Application\Component;
 
+use D3\DebugBar\Application\Models\Collectors\OxidConfigCollector;
 use D3\DebugBar\Application\Models\Collectors\SmartyCollector;
 use D3\DebugBar\Application\Models\TimeDataCollectorHandler;
 use DebugBar\Bridge\DoctrineCollector;
@@ -102,6 +103,14 @@ class DebugBarComponent extends BaseController
     }
 
     /**
+     * @return OxidConfigCollector
+     */
+    public function getOxidConfigCollector(): OxidConfigCollector
+    {
+        return oxNew(OxidConfigCollector::class, Registry::getConfig());
+    }
+
+    /**
      * @param object $object
      * @param string $propName
      *
@@ -128,6 +137,7 @@ class DebugBarComponent extends BaseController
         $debugbar->addCollector($this->getMonologCollector());
         $debugbar->addCollector($this->getDoctrineCollector());
         $debugbar->addCollector($this->getSmartyCollector());
+        $debugbar->addCollector($this->getOxidConfigCollector());
     }
 
     /**

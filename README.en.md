@@ -46,6 +46,24 @@ If necessary, please confirm that you allow `composer-symlinker` to execute code
 
 Activate the module in Shopadmin under "Extensions -> Modules".
 
+## How to use
+
+The DebugBar displays the following tabs:
+- Messages
+  can contain individual debug output. Messages can be set within the PHP code with `debugVar($message)` and corresponds to the OXID function `dumpVar(...)`
+- Request
+  shows all information from GET and POST requests, as well as session, cookie and server variables
+- Timeline
+  displays all areas defined with `startProfile` and `stopProfile` with single and summed execution time as well as a waterfall diagram
+- Monolog
+  lists all log messages passed to the Monolog Logger
+- Database
+  shows all database queries necessary to generate the current page
+- Smarty
+  lists all Smarty variables available on the current shop page
+- Configuration
+  Provides all configuration settings of the shop (from database and file).
+
 ## Changelog
 
 See [CHANGELOG](CHANGELOG.md) for further informations.

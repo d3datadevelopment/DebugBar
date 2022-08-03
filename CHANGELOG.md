@@ -14,4 +14,5 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
     - Doctrine database queries collector
     - Smarty variables collector
     - Timeline profiling collector
+    - Shop configuration collector
     - Collector for freely definable debug messages 

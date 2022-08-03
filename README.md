@@ -46,9 +46,6 @@ Sofern nötig, bestätigen Sie bitte, dass Sie `composer-symlinker` erlauben, Co
 
 Aktivieren Sie das Modul im Shopadmin unter "Erweiterungen -> Module".
 
-```
-include './modules/d3/debugbar/Modules/functions.php';
-```
 ## Verwendung
 
 Die DebugBar stellt folgende Tabs dar:
@@ -64,6 +61,8 @@ Die DebugBar stellt folgende Tabs dar:
   zeigt alle zur Generierung der aktuellen Seite nötigen Datenbankabfragen
 - Smarty
   listet alle Smarty-Variablen, die auf der aktuellen Shopseite zur Verfügung stehen
+- Configuration
+  stellt alle Konfigurationseinstellungen des Shops aus Datenbank und Dateien zur Verfügung
 
 ## Changelog
 
