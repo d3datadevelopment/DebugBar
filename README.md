@@ -41,10 +41,10 @@ Bitte tragen Sie den folgenden Abschnitt in die `composer.json` Ihres Projektes 
 
 
 ```bash
-php composer require d3/modulename:^2.0
+php composer require d3/oxid-debugbar:^1.0
 ``` 
 
-Sofern nötig, bestätigen Sie bitte, dass Sie `composer-symlinker` erlauben, Code auszuführen.
+Sofern nötig, bestätigen Sie bitte, dass Sie `composer-symlinker` und `composer-patches` erlauben, Code auszuführen.
 
 Aktivieren Sie das Modul im Shopadmin unter "Erweiterungen -> Module".
 

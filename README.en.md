@@ -41,10 +41,10 @@ Open a command line and navigate to the root directory of the shop (parent direc
 
 
 ```bash
-php composer require d3/modulename:^2.0
+php composer require d3/oxid-debugbar:^1.0
 ``` 
 
-If necessary, please confirm that you allow `composer-symlinker` to execute code.
+If necessary, please confirm that you allow `composer-symlinker` and `composer-patches` to execute code.
 
 Activate the module in Shopadmin under "Extensions -> Modules".
 
@@ -80,7 +80,7 @@ If you have a suggestion that would make this better, please fork the repo and c
 - Push to the Branch (git push origin feature/AmazingFeature)
 - Open a Pull Request
 
-## Licence
+## License
 (status: 2022-07-30)
 
 Distributed under the GPLv3 license.
@@ -93,7 +93,7 @@ This software is distributed under the GNU GENERAL PUBLIC LICENSE version 3.
 
 For full copyright and licensing information, please see the [LICENSE](LICENSE.md) file distributed with this source code.
 
-## Further licences and terms of use
+## Further licenses and terms of use
 
 ### Smarty collector
 ([https://github.com/Junker/php-debugbar-smarty/blob/master/LICENSE](https://github.com/Junker/php-debugbar-smarty/blob/master/LICENSE) - status 2022-07-31)

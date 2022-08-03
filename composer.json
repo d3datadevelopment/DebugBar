@@ -1,5 +1,5 @@
 {
-  "name": "d3/debugbar",
+  "name": "d3/oxid-debugbar",
   "description": "add the DegugBar to OXID eShop",
   "type": "oxideshop-module",
   "keywords": [
