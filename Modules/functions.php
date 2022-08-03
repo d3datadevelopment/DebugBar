@@ -85,8 +85,8 @@ function debugVar($mVar, bool $blToFile = false): void
         $out = var_export($mVar, true);
         $f = fopen(Registry::getConfig()->getConfigParam('sCompileDir') . "/vardump.txt", "a");
         if (is_resource($f)) {
-            fwrite( $f, $out );
-            fclose( $f );
+            fwrite($f, $out);
+            fclose($f);
         }
     } else {
         if (!isAdmin()) {

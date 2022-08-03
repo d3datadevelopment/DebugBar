@@ -37,7 +37,7 @@ $aModule = [
     'url'         => 'https://www.oxidmodule.com/',
     'controllers' => [],
     'extend'      => [
-        ShopControl::class => ShopControl_DebugBar::class
+        ShopControl::class => ShopControl_DebugBar::class,
     ],
     'events'      => [],
     'templates'   => [],

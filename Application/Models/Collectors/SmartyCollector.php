@@ -22,93 +22,93 @@ use Smarty;
 class SmartyCollector extends DataCollector implements Renderable
 {
     /** @var Smarty */
-	protected $smarty;
+    protected $smarty;
 
-	/**
-	 * @var bool
-	 */
-	protected $useHtmlVarDumper = false;
+    /**
+     * @var bool
+     */
+    protected $useHtmlVarDumper = false;
 
-	/**
-	 * Sets a flag indicating whether the Symfony HtmlDumper will be used to dump variables for
-	 * rich variable rendering.
-	 *
-	 * @param bool $value
-	 * @return $this
-	 */
-	public function useHtmlVarDumper($value = true)
-	{
-		$this->useHtmlVarDumper = $value;
+    /**
+     * Sets a flag indicating whether the Symfony HtmlDumper will be used to dump variables for
+     * rich variable rendering.
+     *
+     * @param bool $value
+     * @return $this
+     */
+    public function useHtmlVarDumper($value = true)
+    {
+        $this->useHtmlVarDumper = $value;
 
-		return $this;
-	}
+        return $this;
+    }
 
-	/**
-	 * Indicates whether the Symfony HtmlDumper will be used to dump variables for rich variable
-	 * rendering.
-	 *
-	 * @return mixed
-	 */
-	public function isHtmlVarDumperUsed()
-	{
-		return $this->useHtmlVarDumper;
-	}
+    /**
+     * Indicates whether the Symfony HtmlDumper will be used to dump variables for rich variable
+     * rendering.
+     *
+     * @return mixed
+     */
+    public function isHtmlVarDumperUsed()
+    {
+        return $this->useHtmlVarDumper;
+    }
 
     /**
      * @param Smarty $smarty
      */
-	public function __construct(Smarty $smarty)
-	{
-		$this->smarty = $smarty;
-	}
+    public function __construct(Smarty $smarty)
+    {
+        $this->smarty = $smarty;
+    }
 
     /**
      * @return array
      */
-	public function collect(): array
+    public function collect(): array
     {
-		$data = [];
+        $data = [];
 
         $vars = $this->smarty->get_template_vars();
 
-		foreach ($vars as $idx => $var) {
-			if ($this->isHtmlVarDumperUsed()) {
-				$data[$idx] = $this->getVarDumper()->renderVar($var);
-			} else {
-				$data[$idx] = $this->getDataFormatter()->formatVar($var);
-			}
-		}
+        foreach ($vars as $idx => $var) {
+            if ($this->isHtmlVarDumperUsed()) {
+                $data[$idx] = $this->getVarDumper()->renderVar($var);
+            } else {
+                $data[$idx] = $this->getDataFormatter()->formatVar($var);
+            }
+        }
 
-		return ['vars' => $data, 'count' => count($data)];
-	}
+        return ['vars' => $data, 'count' => count($data)];
+    }
 
     /**
      * @return string
      */
-	public function getName(): string
+    public function getName(): string
     {
-		return 'smarty';
-	}
+        return 'smarty';
+    }
 
     /**
      * @return array
      */
-	public function getWidgets(): array
+    public function getWidgets(): array
     {
-		$widget = $this->isHtmlVarDumperUsed()
-			? "PhpDebugBar.Widgets.HtmlVariableListWidget"
-			: "PhpDebugBar.Widgets.VariableListWidget";
-		return array(
-			"smarty" => array(
-				"icon" => "tags",
-				"widget" => $widget,
-				"map" => "smarty.vars",
-				"default" => "{}"
-			),
-		"smarty:badge" => array(
-				"map" => "smarty.count",
-				"default" => 0
-			)
-		);
-	}
+        $widget = $this->isHtmlVarDumperUsed()
+            ? "PhpDebugBar.Widgets.HtmlVariableListWidget"
+            : "PhpDebugBar.Widgets.VariableListWidget";
+        return [
+            "smarty" => [
+                "icon" => "tags",
+                "widget" => $widget,
+                "map" => "smarty.vars",
+                "default" => "{}",
+            ],
+        "smarty:badge" => [
+                "map" => "smarty.count",
+                "default" => 0,
+            ],
+        ];
+    }
 }

@@ -17,5 +17,7 @@ namespace D3\DebugBar\Modules\Core {
 
     use OxidEsales\Eshop\Core\ShopControl;
 
-    class ShopControl_DebugBar_parent extends ShopControl{}
+    class ShopControl_DebugBar_parent extends ShopControl
+    {
+    }
 }
