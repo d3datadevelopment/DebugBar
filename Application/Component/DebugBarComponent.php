@@ -16,6 +16,8 @@ declare(strict_types=1);
 namespace D3\DebugBar\Application\Component;
 
 use D3\DebugBar\Application\Models\Collectors\OxidConfigCollector;
+use D3\DebugBar\Application\Models\Collectors\OxidShopCollector;
+use D3\DebugBar\Application\Models\Collectors\OxidVersionCollector;
 use D3\DebugBar\Application\Models\Collectors\SmartyCollector;
 use D3\DebugBar\Application\Models\TimeDataCollectorHandler;
 use DebugBar\Bridge\DoctrineCollector;
@@ -103,11 +105,27 @@ class DebugBarComponent extends BaseController
     }
 
     /**
+     * @return OxidShopCollector
+     */
+    public function getOxidShopCollector(): OxidShopCollector
+    {
+        return oxNew(OxidShopCollector::class);
+    }
+
+    /**
      * @return OxidConfigCollector
      */
     public function getOxidConfigCollector(): OxidConfigCollector
     {
         return oxNew(OxidConfigCollector::class, Registry::getConfig());
+    }
+
+    /**
+     * @return OxidVersionCollector
+     */
+    public function getOxidVersionCollector(): OxidVersionCollector
+    {
+        return oxNew(OxidVersionCollector::class);
     }
 
     /**
@@ -134,10 +152,12 @@ class DebugBarComponent extends BaseController
      */
     public function addCollectors(StandardDebugBar $debugbar): void
     {
+        $debugbar->addCollector($this->getOxidShopCollector());
+        $debugbar->addCollector($this->getOxidConfigCollector());
+        $debugbar->addCollector($this->getSmartyCollector());
         $debugbar->addCollector($this->getMonologCollector());
         $debugbar->addCollector($this->getDoctrineCollector());
-        $debugbar->addCollector($this->getSmartyCollector());
-        $debugbar->addCollector($this->getOxidConfigCollector());
+        $debugbar->addCollector($this->getOxidVersionCollector());
     }
 
     /**

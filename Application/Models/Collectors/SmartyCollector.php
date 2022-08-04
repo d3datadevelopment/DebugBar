@@ -101,12 +101,12 @@ class SmartyCollector extends DataCollector implements Renderable
             : "PhpDebugBar.Widgets.VariableListWidget";
         return [
             "smarty" => [
-                "icon" => "tags",
+                "icon" => "file-text",
                 "widget" => $widget,
                 "map" => "smarty.vars",
                 "default" => "{}",
             ],
-        "smarty:badge" => [
+            "smarty:badge" => [
                 "map" => "smarty.count",
                 "default" => 0,
             ],

@@ -128,7 +128,7 @@ class OxidConfigCollector extends DataCollector implements Renderable
             : "PhpDebugBar.Widgets.VariableListWidget";
         return [
             "Configuration" => [
-                "icon" => "tags",
+                "icon" => "database",
                 "widget" => $widget,
                 "map" => "oxidconfig.vars",
                 "default" => "{}",
