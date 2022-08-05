@@ -10,10 +10,11 @@ The debug bar enables the display of relevant debug information in the shop fron
 ## Table of content
 
 - [Installation](#installation)
+- [How to use](#how-to-use)
 - [Changelog](#changelog)
 - [Contributing](#contributing)
 - [License](#license)
-- [Further licences and terms of use](#further-licences-and-terms-of-use)
+- [Further licenses and terms of use](#further-licenses-and-terms-of-use)
 
 ## Installation
 
@@ -39,7 +40,6 @@ Please enter the following section in the `composer.json` of your project:
 
 Open a command line and navigate to the root directory of the shop (parent directory of source and vendor). Execute the following command. Adapt the path details to your installation environment.
 
-
 ```bash
 php composer require d3/oxid-debugbar:^1.0
 ``` 
@@ -50,21 +50,25 @@ Activate the module in Shopadmin under "Extensions -> Modules".
 
 ## How to use
 
+__Please note that the DebugBar contains security-relevant information. It should therefore not be activated under any circumstances in a freely accessible installation.__
+
 The DebugBar displays the following tabs:
 - Messages
-  can contain individual debug output. Messages can be set within the PHP code with `debugVar($message)` and corresponds to the OXID function `dumpVar(...)`
+  can contain individual debug output. The messages can be set within the PHP code with `debugVar($message)` and corresponds to the OXID function `dumpVar(...)`
 - Request
   shows all information from GET and POST requests, as well as session, cookie and server variables
 - Timeline
   displays all areas defined with `startProfile` and `stopProfile` with single and summed execution time as well as a waterfall diagram
+- Shop
+  shows basic shop information (edition, versions, theme information)
+- Configuration
+  provides all configuration settings of the shop from database and config files
+- Smarty
+  lists all variables of the template engine that are available on the current shop page
 - Monolog
   lists all log messages passed to the Monolog Logger
 - Database
   shows all database queries necessary to generate the current page
-- Smarty
-  lists all Smarty variables available on the current shop page
-- Configuration
-  Provides all configuration settings of the shop (from database and file).
 
 ## Changelog
 

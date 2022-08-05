@@ -6,6 +6,7 @@
  *
  * https://www.d3data.de
  *
+ * @copyright (c) 2016 Dmitry Kosenkov
  * @copyright (C) D3 Data Development (Inh. Thomas Dartsch)
  * @author    D3 Data Development - Daniel Seifert <info@shopmodule.com>
  * @link      https://www.oxidmodule.com

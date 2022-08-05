@@ -10,6 +10,7 @@ Die Debug Bar ermöglicht die Darstellung relevanter Debuginformationen im Shopf
 ## Inhaltsverzeichnis
 
 - [Installation](#installation)
+- [Verwendung](#verwendung)
 - [Changelog](#changelog)
 - [Beitragen](#beitragen)
 - [Lizenz](#lizenz)
@@ -39,7 +40,6 @@ Bitte tragen Sie den folgenden Abschnitt in die `composer.json` Ihres Projektes 
 
 Öffnen Sie eine Kommandozeile und navigieren Sie zum Stammverzeichnis des Shops (Elternverzeichnis von source und vendor). Führen Sie den folgenden Befehl aus. Passen Sie die Pfadangaben an Ihre Installationsumgebung an.
 
-
 ```bash
 php composer require d3/oxid-debugbar:^1.0
 ``` 
@@ -50,6 +50,8 @@ Aktivieren Sie das Modul im Shopadmin unter "Erweiterungen -> Module".
 
 ## Verwendung
 
+__Bitte beachten Sie, dass die DebugBar sicherheitsrelevante Informationen enthält. Diese sollte daher unter keinen Umständen in einer frei zugänglichen Installation aktiviert sein.__
+
 Die DebugBar stellt folgende Tabs dar:
 - Messages
   kann individuelle Debugausgaben enthalten. Die Nachrichten können innerhalb des PHP-Codes mit `debugVar($message)` gesetzt werden und entspricht der OXID-Funktion `dumpVar(...)`.
@@ -57,14 +59,16 @@ Die DebugBar stellt folgende Tabs dar:
   zeigt alle Angaben aus GET- und POST-Requests, sowie Session-, Cookie- und Servervariablen
 - Timeline
   stellt alle mit `startProfile` und `stopProfile` definierten Bereiche mit einzelner und summierter Ausführungszeit sowie als Wasserfalldiagramm dar
+- Shop
+  zeigt grundlegende Shopinformationen (Edition, Versionen, Themeinformationen)
+- Configuration
+  stellt alle Konfigurationseinstellungen des Shops aus Datenbank und config-Dateien zur Verfügung
+- Smarty
+  listet alle Variablen der Template-Engine, die auf der aktuellen Shopseite zur Verfügung stehen
 - Monolog
   listet alle an den Monolog Logger übergebenen Lognachrichten
 - Database
   zeigt alle zur Generierung der aktuellen Seite nötigen Datenbankabfragen
-- Smarty
-  listet alle Smarty-Variablen, die auf der aktuellen Shopseite zur Verfügung stehen
-- Configuration
-  stellt alle Konfigurationseinstellungen des Shops aus Datenbank und Dateien zur Verfügung
 
 ## Changelog
 
