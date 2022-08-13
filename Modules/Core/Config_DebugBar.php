@@ -13,16 +13,17 @@
 
 declare(strict_types=1);
 
-namespace D3\DebugBar\Modules\Core {
+namespace D3\DebugBar\Modules\Core;
 
-    use OxidEsales\Eshop\Core\ShopControl;
-    use OxidEsales\EshopCommunity\Core\Config;
+use D3\DebugBar\Core\DebugBarExceptionHandler;
 
-    class Config_DebugBar_parent extends Config
+class Config_DebugBar extends Config_DebugBar_parent
+{
+    /**
+     * @return DebugBarExceptionHandler
+     */
+    protected function getExceptionHandler()
     {
-    }
-
-    class ShopControl_DebugBar_parent extends ShopControl
-    {
+        return new DebugBarExceptionHandler();
     }
 }

@@ -22,6 +22,7 @@ use D3\DebugBar\Application\Models\Collectors\SmartyCollector;
 use D3\DebugBar\Application\Models\TimeDataCollectorHandler;
 use DebugBar\Bridge\DoctrineCollector;
 use DebugBar\Bridge\MonologCollector;
+use DebugBar\DataCollector\ExceptionsCollector;
 use DebugBar\DataCollector\MemoryCollector;
 use DebugBar\DataCollector\MessagesCollector;
 use DebugBar\DataCollector\PhpInfoCollector;
@@ -163,6 +164,7 @@ class DebugBarComponent extends BaseController
         $debugbar->addCollector(new RequestDataCollector());
         $debugbar->addCollector(new TimeDataCollector());
         $debugbar->addCollector(new MemoryCollector());
+        $debugbar->addCollector(new ExceptionsCollector());
 
         // add custom collectors
         $debugbar->addCollector($this->getOxidShopCollector());

@@ -16,22 +16,78 @@ declare(strict_types=1);
 namespace D3\DebugBar\Modules\Core;
 
 use D3\DebugBar\Application\Component\DebugBarComponent;
+use D3\DebugBar\Core\DebugBarExceptionHandler;
+use DebugBar\DataCollector\ExceptionsCollector;
+use ErrorException;
 use OxidEsales\Eshop\Application\Controller\FrontendController;
 use OxidEsales\Eshop\Core\Registry;
 
 class ShopControl_DebugBar extends ShopControl_DebugBar_parent
 {
+    /**
+     * @throws ErrorException
+     */
     public function __construct()
     {
-        $this->_d3AddDebugBarComponent();
+        $this->d3DebugBarSetErrorHandler();;
+        $this->d3DebugBarSetExceptionHandler();
+        $this->d3AddDebugBarComponent();
 
         parent::__construct();
     }
 
     /**
      * @return void
+     * @throws ErrorException
      */
-    protected function _d3AddDebugBarComponent(): void
+    public function d3DebugBarSetErrorHandler()
+    {
+        set_error_handler(function ($severity, $message, $file, $line) {
+            if (!(error_reporting() & $severity)) {
+                // This error code is not included in error_reporting.
+                return;
+            }
+
+            $smartyTemplate = $this->getSmartyTemplateLocationFromError($message);
+            if (is_array($smartyTemplate)) {
+                [$file, $line] = $smartyTemplate;
+            }
+
+            throw new ErrorException($message, 0, $severity, $file, $line);
+        });
+    }
+
+    /**
+     * @return void
+     */
+    protected function d3DebugBarSetExceptionHandler(): void
+    {
+        set_exception_handler([
+            new DebugBarExceptionHandler(),
+            'handleUncaughtException'
+        ]);
+    }
+
+    /**
+     * @param $messsage
+     * @return array|null
+     */
+    protected function getSmartyTemplateLocationFromError($messsage)
+    {
+        if (stristr($messsage, 'Smarty error: [in ')) {
+            $start = strpos($messsage, '[')+1;
+            $end = strpos($messsage, ']');
+            $parts = explode(' ', substr($messsage, $start, $end - $start));
+            return [Registry::getConfig()->getTemplateDir(isAdmin()).$parts[1], (int) $parts[3]];
+        }
+
+        return null;
+    }
+
+    /**
+     * @return void
+     */
+    protected function d3AddDebugBarComponent(): void
     {
         $userComponentNames = Registry::getConfig()->getConfigParam('aUserComponentNames');
         $d3CmpName = DebugBarComponent::class;
@@ -49,8 +105,8 @@ class ShopControl_DebugBar extends ShopControl_DebugBar_parent
 
     public function __destruct()
     {
-        if (!isAdmin()) {
-            /** @var FrontendController $activeView */
+        global $debugBarSet;
+        if (!isAdmin() && $debugBarSet !== 1) {
             $activeView =  Registry::getConfig()->getTopActiveView();
             /** @var DebugBarComponent|null $debugBarComponent */
             $debugBarComponent = $activeView->getComponent(DebugBarComponent::class);

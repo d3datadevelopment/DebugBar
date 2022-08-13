@@ -13,7 +13,9 @@
 
 declare(strict_types=1);
 
+use D3\DebugBar\Modules\Core\Config_DebugBar;
 use D3\DebugBar\Modules\Core\ShopControl_DebugBar;
+use OxidEsales\Eshop\Core\Config;
 use OxidEsales\Eshop\Core\ShopControl;
 
 $sMetadataVersion = '2.1';
@@ -37,6 +39,7 @@ $aModule = [
     'url'         => 'https://www.oxidmodule.com/',
     'controllers' => [],
     'extend'      => [
+        Config::class      => Config_DebugBar::class,
         ShopControl::class => ShopControl_DebugBar::class,
     ],
     'events'      => [],
