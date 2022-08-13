@@ -69,7 +69,7 @@ class SmartyCollector extends DataCollector implements Renderable
      */
     public function collect(): array
     {
-        $data = ['current view template' => Registry::getConfig()->getTopActiveView()->getTemplateName()];
+        $data = [];
 
         $vars = $this->smarty->get_template_vars();
 
