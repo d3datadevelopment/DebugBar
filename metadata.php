@@ -42,7 +42,9 @@ $aModule = [
         Config::class      => Config_DebugBar::class,
         ShopControl::class => ShopControl_DebugBar::class,
     ],
-    'events'      => [],
+    'events'      => [
+        'onActivate'    => '\D3\DebugBar\Setup\Events::onActivate',
+    ],
     'templates'   => [],
     'settings'    => [],
     'blocks'      => [],

@@ -46,6 +46,8 @@ php composer require d3/oxid-debugbar:^1.0
 
 Sofern nötig, bestätigen Sie bitte, dass Sie `composer-symlinker` und `composer-patches` erlauben, Code auszuführen.
 
+Lassen Sie die Dateien des Paketes `oxid-esales/oxideshop-ce` überschreiben.
+
 Aktivieren Sie das Modul im Shopadmin unter "Erweiterungen -> Module".
 
 ## Verwendung

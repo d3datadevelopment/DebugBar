@@ -46,6 +46,8 @@ php composer require d3/oxid-debugbar:^1.0
 
 If necessary, please confirm that you allow `composer-symlinker` and `composer-patches` to execute code.
 
+Have the files of the package `oxid-esales/oxideshop-ce` overwritten.
+
 Activate the module in Shopadmin under "Extensions -> Modules".
 
 ## How to use
