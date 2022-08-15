@@ -43,19 +43,22 @@ class ShopControl_DebugBar extends ShopControl_DebugBar_parent
     public function d3DebugBarSetErrorHandler()
     {
         if ($this->d3CanActivateDebugBar()) {
-            set_error_handler( function( $severity, $message, $file, $line ) {
-                if ( ! ( error_reporting() & $severity ) ) {
-                    // This error code is not included in error_reporting.
-                    return;
-                }
+            set_error_handler(
+                function( $severity, $message, $file, $line ) {
+                    if ( 0 === error_reporting() || !( error_reporting() & $severity ) ) {
+                        // This error code is not included in error_reporting.
+                        return false;
+                    }
 
-                $smartyTemplate = $this->getSmartyTemplateLocationFromError( $message );
-                if ( is_array( $smartyTemplate ) ) {
-                    [ $file, $line ] = $smartyTemplate;
-                }
+                    $smartyTemplate = $this->getSmartyTemplateLocationFromError( $message );
+                    if ( is_array( $smartyTemplate ) ) {
+                        [ $file, $line ] = $smartyTemplate;
+                    }
 
-                throw new ErrorException( $message, 0, $severity, $file, $line );
-            } );
+                    throw new ErrorException( $message, 0, $severity, $file, $line );
+                },
+                E_ERROR | E_CORE_ERROR | E_COMPILE_ERROR | E_USER_ERROR | E_RECOVERABLE_ERROR
+            );
         }
     }
 
