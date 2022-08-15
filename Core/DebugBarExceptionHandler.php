@@ -36,7 +36,6 @@ class DebugBarExceptionHandler
      */
     public function handleUncaughtException(Throwable $exception)
     {
-        //dumpvar(__METHOD__.__LINE__);
         try {
             $debugMode = (bool) \OxidEsales\Eshop\Core\Registry::get(\OxidEsales\Eshop\Core\ConfigFile::class)->getVar('iDebug');
             $defaultExceptionHandler = new ExceptionHandler($debugMode);
@@ -56,11 +55,9 @@ class DebugBarExceptionHandler
         }
 
         global $debugBarSet;
-        if ($debugBarSet !== 1) {
-            /** @var FrontendController $activeView */
-            $activeView = Registry::getConfig()->getTopActiveView();
-            /** @var DebugBarComponent|null $debugBarComponent */
-            $debugBarComponent = $activeView->getComponent(DebugBarComponent::class) ?: oxNew(DebugBarComponent::class);
+        if ($debugBarSet !== 1 && false === isAdmin()) {
+            /** @var DebugBarComponent $debugBarComponent */
+            $debugBarComponent = oxNew( DebugBarComponent::class );
 
             /** @var ExceptionsCollector $excCollector */
             $excCollector = $debugBarComponent->getDebugBar()->getCollector('exceptions');

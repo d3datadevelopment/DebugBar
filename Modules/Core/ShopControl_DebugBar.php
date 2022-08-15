@@ -42,19 +42,21 @@ class ShopControl_DebugBar extends ShopControl_DebugBar_parent
      */
     public function d3DebugBarSetErrorHandler()
     {
-        set_error_handler(function ($severity, $message, $file, $line) {
-            if (!(error_reporting() & $severity)) {
-                // This error code is not included in error_reporting.
-                return;
-            }
+        if ($this->d3CanActivateDebugBar()) {
+            set_error_handler( function( $severity, $message, $file, $line ) {
+                if ( ! ( error_reporting() & $severity ) ) {
+                    // This error code is not included in error_reporting.
+                    return;
+                }
 
-            $smartyTemplate = $this->getSmartyTemplateLocationFromError($message);
-            if (is_array($smartyTemplate)) {
-                [$file, $line] = $smartyTemplate;
-            }
+                $smartyTemplate = $this->getSmartyTemplateLocationFromError( $message );
+                if ( is_array( $smartyTemplate ) ) {
+                    [ $file, $line ] = $smartyTemplate;
+                }
 
-            throw new ErrorException($message, 0, $severity, $file, $line);
-        });
+                throw new ErrorException( $message, 0, $severity, $file, $line );
+            } );
+        }
     }
 
     /**
@@ -62,10 +64,12 @@ class ShopControl_DebugBar extends ShopControl_DebugBar_parent
      */
     protected function d3DebugBarSetExceptionHandler(): void
     {
-        set_exception_handler([
-            new DebugBarExceptionHandler(),
-            'handleUncaughtException'
-        ]);
+        if ($this->d3CanActivateDebugBar()) {
+            set_exception_handler( [
+                new DebugBarExceptionHandler(),
+                'handleUncaughtException'
+            ] );
+        }
     }
 
     /**
@@ -89,18 +93,28 @@ class ShopControl_DebugBar extends ShopControl_DebugBar_parent
      */
     protected function d3AddDebugBarComponent(): void
     {
-        $userComponentNames = Registry::getConfig()->getConfigParam('aUserComponentNames');
-        $d3CmpName = DebugBarComponent::class;
-        $blDontUseCache = 1;
+        if ($this->d3CanActivateDebugBar()) {
+            $userComponentNames = Registry::getConfig()->getConfigParam( 'aUserComponentNames' );
+            $d3CmpName          = DebugBarComponent::class;
+            $blDontUseCache     = 1;
 
-        if (!is_array($userComponentNames)) {
-            $userComponentNames = [];
-        }
+            if ( ! is_array( $userComponentNames ) ) {
+                $userComponentNames = [];
+            }
 
-        if (!in_array($d3CmpName, array_keys($userComponentNames))) {
-            $userComponentNames[$d3CmpName] = $blDontUseCache;
-            Registry::getConfig()->setConfigParam('aUserComponentNames', $userComponentNames);
+            if ( ! in_array( $d3CmpName, array_keys( $userComponentNames ) ) ) {
+                $userComponentNames[ $d3CmpName ] = $blDontUseCache;
+                Registry::getConfig()->setConfigParam( 'aUserComponentNames', $userComponentNames );
+            }
         }
+    }
+
+    /**
+     * @return bool
+     */
+    protected function d3CanActivateDebugBar(): bool
+    {
+        return false === isAdmin();
     }
 
     public function __destruct()
