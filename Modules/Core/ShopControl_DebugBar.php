@@ -16,6 +16,10 @@ declare(strict_types=1);
 namespace D3\DebugBar\Modules\Core;
 
 use D3\DebugBar\Application\Component\DebugBarComponent;
+use D3\DebugBar\Application\Models\Exceptions\CompileErrorException;
+use D3\DebugBar\Application\Models\Exceptions\CoreErrorException;
+use D3\DebugBar\Application\Models\Exceptions\ParseException;
+use D3\DebugBar\Application\Models\Exceptions\UserErrorException;
 use D3\DebugBar\Core\DebugBarExceptionHandler;
 use DebugBar\DataCollector\ExceptionsCollector;
 use ErrorException;
@@ -55,9 +59,21 @@ class ShopControl_DebugBar extends ShopControl_DebugBar_parent
                         [ $file, $line ] = $smartyTemplate;
                     }
 
-                    throw new ErrorException( $message, 0, $severity, $file, $line );
+                    switch($severity) {
+                        case E_CORE_ERROR:
+                            throw new CoreErrorException($message, 0, $severity, $file, $line);
+                        case E_COMPILE_ERROR:
+                            throw new CompileErrorException($message, 0, $severity, $file, $line);
+                        case E_USER_ERROR:
+                            throw new UserErrorException($message, 0, $severity, $file, $line);
+                        case E_PARSE:
+                            throw new ParseException($message, 0, $severity, $file, $line);
+                        case E_ERROR:
+                        default:
+                            throw new ErrorException($message, 0, $severity, $file, $line);
+                    }
                 },
-                E_ERROR | E_CORE_ERROR | E_COMPILE_ERROR | E_USER_ERROR | E_RECOVERABLE_ERROR
+                E_ERROR | E_CORE_ERROR | E_COMPILE_ERROR | E_USER_ERROR | E_PARSE
             );
         }
     }
