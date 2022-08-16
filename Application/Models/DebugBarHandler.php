@@ -28,13 +28,12 @@ class DebugBarHandler
     public function setErrorHandler(): void
     {
         if ($this->d3CanActivateDebugBar()) {
-            set_error_handler(
-                [
-                    new DebugBarErrorHandler(),
-                    'callback'
-                ],
-                $this->getHandledErrorTypes()
-            );
+            /** @var callable $callable */
+            $callable = [
+                new DebugBarErrorHandler(),
+                'callback',
+            ];
+            set_error_handler($callable, $this->getHandledErrorTypes());
         }
     }
 
@@ -52,10 +51,10 @@ class DebugBarHandler
     public function setExceptionHandler(): void
     {
         if ($this->d3CanActivateDebugBar()) {
-            set_exception_handler( [
+            set_exception_handler([
                new DebugBarExceptionHandler(),
-               'handleUncaughtException'
-           ] );
+               'handleUncaughtException',
+           ]);
         }
     }
 
@@ -65,17 +64,17 @@ class DebugBarHandler
     public function addDebugBarComponent(): void
     {
         if ($this->d3CanActivateDebugBar()) {
-            $userComponentNames = Registry::getConfig()->getConfigParam( 'aUserComponentNames' );
+            $userComponentNames = Registry::getConfig()->getConfigParam('aUserComponentNames');
             $d3CmpName          = DebugBarComponent::class;
             $blDontUseCache     = 1;
 
-            if ( ! is_array( $userComponentNames ) ) {
+            if (! is_array($userComponentNames)) {
                 $userComponentNames = [];
             }
 
-            if ( ! in_array( $d3CmpName, array_keys( $userComponentNames ) ) ) {
+            if (! in_array($d3CmpName, array_keys($userComponentNames))) {
                 $userComponentNames[ $d3CmpName ] = $blDontUseCache;
-                Registry::getConfig()->setConfigParam( 'aUserComponentNames', $userComponentNames );
+                Registry::getConfig()->setConfigParam('aUserComponentNames', $userComponentNames);
             }
         }
     }

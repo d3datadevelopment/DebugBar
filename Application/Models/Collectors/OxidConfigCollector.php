@@ -36,6 +36,11 @@ class OxidConfigCollector extends DataCollector implements Renderable
      */
     protected $useHtmlVarDumper = false;
 
+    /**
+     * @param Config $config
+     *
+     * @throws ReflectionException
+     */
     public function __construct(Config $config)
     {
         $config->init();
@@ -111,9 +116,9 @@ class OxidConfigCollector extends DataCollector implements Renderable
      * Indicates whether the Symfony HtmlDumper will be used to dump variables for rich variable
      * rendering.
      *
-     * @return mixed
+     * @return bool
      */
-    public function isHtmlVarDumperUsed()
+    public function isHtmlVarDumperUsed(): bool
     {
         return $this->useHtmlVarDumper;
     }

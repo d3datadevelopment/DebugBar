@@ -15,29 +15,19 @@ declare(strict_types=1);
 
 namespace D3\DebugBar\Setup;
 
-use D3\ModCfg\Application\Model\Exception\d3ShopCompatibilityAdapterException;
-use D3\ModCfg\Application\Model\Install\d3install;
-use Doctrine\DBAL\DBALException;
-use OxidEsales\Eshop\Core\Exception\DatabaseConnectionException;
-use OxidEsales\Eshop\Core\Exception\DatabaseErrorException;
-use OxidEsales\Eshop\Core\Exception\StandardException;
-use OxidEsales\Eshop\Core\Exception\SystemComponentException;
 use OxidEsales\Eshop\Core\Registry;
 
 class Events
 {
     /**
-     * @throws d3ShopCompatibilityAdapterException
-     * @throws DBALException
-     * @throws DatabaseConnectionException
-     * @throws DatabaseErrorException
-     * @throws StandardException
-     * @throws SystemComponentException
+     * @return void
      */
-    public static function onActivate()
+    public static function onActivate(): void
     {
+        /** @var string $shopDir */
+        $shopDir = Registry::getConfig()->getConfigParam('sShopDir');
         if (false === file_exists(
-            rtrim(Registry::getConfig()->getConfigParam('sShopDir'), '/').'/out/debugbar/debugbar.jas'
+            rtrim($shopDir, '/').'/out/debugbar/debugbar.jas'
         )) {
             Registry::getUtilsView()->addErrorToDisplay(
                 'The asset files cannot be found. Have you forgotten an installation step described in <a href="https://git.d3data.de/D3Public/DebugBar/src/branch/main/README.en.md">README</a>? Then please run the installation again.'.
@@ -47,7 +37,10 @@ class Events
         }
     }
 
-    public static function onDeactivate()
+    /**
+     * @return void
+     */
+    public static function onDeactivate(): void
     {
     }
 }

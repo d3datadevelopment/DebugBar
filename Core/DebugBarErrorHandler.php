@@ -25,10 +25,10 @@ use OxidEsales\Eshop\Core\Registry;
 class DebugBarErrorHandler
 {
     /**
-     * @param $severity
-     * @param $message
-     * @param $file
-     * @param $line
+     * @param int $severity
+     * @param string $message
+     * @param string $file
+     * @param int $line
      *
      * @return void|false
      * @throws CompileErrorException
@@ -37,22 +37,22 @@ class DebugBarErrorHandler
      * @throws ParseException
      * @throws UserErrorException
      */
-    public function callback( $severity, $message, $file, $line )
+    public function callback(int $severity, string $message, string $file, int $line)
     {
         global $debugBarErrorOccured;
         $debugBarErrorOccured = 1;
 
-        if ( 0 === error_reporting() || !( error_reporting() & $severity ) ) {
+        if (0 === error_reporting() || !(error_reporting() & $severity)) {
             // This error code is not included in error_reporting.
             return false;
         }
 
-        $smartyTemplate = $this->getSmartyTemplateLocationFromError( $message );
-        if ( is_array( $smartyTemplate ) ) {
+        $smartyTemplate = $this->getSmartyTemplateLocationFromError($message);
+        if (is_array($smartyTemplate)) {
             [ $file, $line ] = $smartyTemplate;
         }
 
-        switch($severity) {
+        switch ($severity) {
             case E_CORE_ERROR:
                 throw new CoreErrorException($message, 0, $severity, $file, $line);
             case E_COMPILE_ERROR:
@@ -69,10 +69,10 @@ class DebugBarErrorHandler
     }
 
     /**
-     * @param $messsage
+     * @param string $messsage
      * @return array|null
      */
-    protected function getSmartyTemplateLocationFromError($messsage): ?array
+    protected function getSmartyTemplateLocationFromError(string $messsage): ?array
     {
         if (stristr($messsage, 'Smarty error: [in ')) {
             $start = strpos($messsage, '[')+1;
@@ -85,15 +85,20 @@ class DebugBarErrorHandler
     }
 
     /**
-     * @param string      $message
-     * @param int|null    $severity
-     * @param string|null $file
-     * @param int|null    $line
+     * @param string $message
+     * @param int    $severity
+     * @param string $file
+     * @param int    $line
+     * @return void
      *
      * @throws ErrorException
      */
-    protected function handleUnregisteredErrorTypes(string $message = '', int $severity = null, string $file = null, int $line = null)
-    {
+    protected function handleUnregisteredErrorTypes(
+        string $message = '',
+        int $severity = 1,
+        string $file = __FILE__,
+        int $line = __LINE__
+    ): void {
         throw new ErrorException($message, 0, $severity, $file, $line);
     }
 }

@@ -38,8 +38,8 @@ class ShopControl_DebugBar extends ShopControl_DebugBar_parent
     /**
      * @param string|null $controllerKey
      * @param string|null $function
-     * @param string|null $parameters
-     * @param string|null $viewsChain
+     * @param array $parameters
+     * @param array $viewsChain
      */
     public function start($controllerKey = null, $function = null, $parameters = null, $viewsChain = null)
     {
@@ -62,8 +62,9 @@ class ShopControl_DebugBar extends ShopControl_DebugBar_parent
 
     /**
      * @param Throwable $exception
+     * @return void
      */
-    protected function debugBarHandleException(Throwable $exception)
+    protected function debugBarHandleException(Throwable $exception): void
     {
         $exceptionHandler = new DebugBarExceptionHandler();
         $exceptionHandler->handleUncaughtException($exception);

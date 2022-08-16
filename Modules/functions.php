@@ -20,7 +20,8 @@ use DebugBar\DebugBarException;
 use OxidEsales\Eshop\Core\Registry;
 
 /**
- * @param $sProfileName
+ * @param string $sProfileName
+ *
  * @return void
  */
 function startProfile(string $sProfileName): void

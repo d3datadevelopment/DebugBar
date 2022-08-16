@@ -18,13 +18,17 @@ namespace D3\DebugBar\Application\Models\Collectors;
 use Composer\InstalledVersions;
 use DebugBar\DataCollector\DataCollector;
 use DebugBar\DataCollector\Renderable;
+use Exception;
 use OxidEsales\Eshop\Core\Config;
 use OxidEsales\Eshop\Core\Module\Module;
 use OxidEsales\Eshop\Core\ShopVersion;
 use OxidEsales\Eshop\Core\Theme;
 use OxidEsales\EshopCommunity\Internal\Container\ContainerFactory;
+use OxidEsales\EshopCommunity\Internal\Framework\Module\Configuration\Bridge\ShopConfigurationDaoBridge;
 use OxidEsales\EshopCommunity\Internal\Framework\Module\Configuration\Bridge\ShopConfigurationDaoBridgeInterface;
 use OxidEsales\Facts\Facts;
+use Psr\Container\ContainerExceptionInterface;
+use Psr\Container\NotFoundExceptionInterface;
 
 class OxidShopCollector extends DataCollector implements Renderable
 {
@@ -39,11 +43,18 @@ class OxidShopCollector extends DataCollector implements Renderable
      */
     protected $useHtmlVarDumper = true;
 
+    /**
+     * @throws ContainerExceptionInterface
+     * @throws NotFoundExceptionInterface
+     * @throws Exception
+     */
     public function __construct()
     {
         $facts = new Facts();
         $theme = new Theme();
-        $parentThemeId = $theme->getParent() ? $theme->getParent()->getId() : '--';
+        /** @var Theme|null $parent */
+        $parent = $theme->getParent();
+        $parentThemeId = $parent ? $parent->getId() : '--';
 
         $moduleList = $this->getInstalledModules();
         array_walk(
@@ -60,7 +71,7 @@ class OxidShopCollector extends DataCollector implements Renderable
             'CE Version:' => InstalledVersions::getVersion('oxid-esales/oxideshop-ce'),
             'Theme:' => $theme->getActiveThemeId(),
             'Parent Theme:' => $parentThemeId,
-            'Modules:'  => implode(chr(10), $moduleList)
+            'Modules:'  => implode(chr(10), $moduleList),
         ];
     }
 
@@ -96,9 +107,9 @@ class OxidShopCollector extends DataCollector implements Renderable
      * Indicates whether the Symfony HtmlDumper will be used to dump variables for rich variable
      * rendering.
      *
-     * @return mixed
+     * @return bool
      */
-    public function isHtmlVarDumperUsed()
+    public function isHtmlVarDumperUsed(): bool
     {
         return $this->useHtmlVarDumper;
     }
@@ -121,10 +132,17 @@ class OxidShopCollector extends DataCollector implements Renderable
         ];
     }
 
+    /**
+     * @return array
+     * @throws ContainerExceptionInterface
+     * @throws NotFoundExceptionInterface
+     */
     protected function getInstalledModules(): array
     {
         $container = ContainerFactory::getInstance()->getContainer();
-        $shopConfiguration = $container->get(ShopConfigurationDaoBridgeInterface::class)->get();
+        /** @var ShopConfigurationDaoBridge $shopConfigurationDaoBridge */
+        $shopConfigurationDaoBridge = $container->get(ShopConfigurationDaoBridgeInterface::class);
+        $shopConfiguration = $shopConfigurationDaoBridge->get();
 
         $modules = [];
 

@@ -1,4 +1,5 @@
 <?php
+
 /**
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -16,8 +17,8 @@ namespace D3\DebugBar\Application\Models\Collectors;
 
 use DebugBar\DataCollector\DataCollector;
 use DebugBar\DataCollector\Renderable;
+use Exception;
 use OxidEsales\Eshop\Core\ShopVersion;
-use OxidEsales\Eshop\Core\Theme;
 use OxidEsales\Facts\Facts;
 
 /**
@@ -28,38 +29,35 @@ class OxidVersionCollector extends DataCollector implements Renderable
     /**
      * @return string
      */
-    public function getName()
+    public function getName(): string
     {
         return 'oxidversion';
     }
 
     /**
      * @return array
+     * @throws Exception
      */
-    public function collect()
+    public function collect(): array
     {
         $facts = new Facts();
-        $theme = new Theme();
-        $parentThemeId = $theme->getParent() ? $theme->getParent()->getId() : '--';
 
-        return array(
-            'version' => $facts->getEdition().' '.ShopVersion::getVersion()
-        );
+        return [
+            'version' => $facts->getEdition().' '.ShopVersion::getVersion(),
+        ];
     }
 
     /**
-     * {@inheritDoc}
+     * @return string[][]
      */
-    public function getWidgets()
+    public function getWidgets(): array
     {
-        $collect = $this->collect();
-
         return [
             "oxidversion" => [
                 "icon" => "shopping-cart",
                 "tooltip" => 'OXID Version',
                 "map" => $this->getName().".version",
-                "default" => ""
+                "default" => "",
             ],
         ];
     }

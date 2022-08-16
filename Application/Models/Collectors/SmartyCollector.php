@@ -38,7 +38,7 @@ class SmartyCollector extends DataCollector implements Renderable
      * @param bool $value
      * @return $this
      */
-    public function useHtmlVarDumper($value = true)
+    public function useHtmlVarDumper(bool $value = true): SmartyCollector
     {
         $this->useHtmlVarDumper = $value;
 
@@ -49,9 +49,9 @@ class SmartyCollector extends DataCollector implements Renderable
      * Indicates whether the Symfony HtmlDumper will be used to dump variables for rich variable
      * rendering.
      *
-     * @return mixed
+     * @return bool
      */
-    public function isHtmlVarDumperUsed()
+    public function isHtmlVarDumperUsed(): bool
     {
         return $this->useHtmlVarDumper;
     }
@@ -69,7 +69,7 @@ class SmartyCollector extends DataCollector implements Renderable
      */
     public function collect(): array
     {
-        $data = [];
+        $data = ['current view template' => Registry::getConfig()->getTopActiveView()->getTemplateName()];
 
         $vars = $this->smarty->get_template_vars();
 

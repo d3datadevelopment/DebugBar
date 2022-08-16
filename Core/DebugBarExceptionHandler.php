@@ -31,11 +31,13 @@ class DebugBarExceptionHandler
      * Handler for uncaught exceptions.
      *
      * @param Throwable $exception exception object
+     * @return void
      */
-    public function handleUncaughtException(Throwable $exception)
+    public function handleUncaughtException(Throwable $exception): void
     {
         try {
-            $debugMode = (bool) Registry::get( ConfigFile::class)->getVar( 'iDebug');
+            /** @var int $debugMode */
+            $debugMode = Registry::get(ConfigFile::class)->getVar('iDebug');
             $defaultExceptionHandler = new ExceptionHandler($debugMode);
             $defaultExceptionHandler->writeExceptionToLog($exception);
         } catch (Throwable $loggerException) {
@@ -57,14 +59,14 @@ class DebugBarExceptionHandler
         if ($debugBarSet !== 1 && false === isAdmin()) {
             try {
                 /** @var DebugBarComponent $debugBarComponent */
-                $debugBarComponent = oxNew( DebugBarComponent::class );
+                $debugBarComponent = oxNew(DebugBarComponent::class);
 
                 /** @var ExceptionsCollector $excCollector */
-                $excCollector = $debugBarComponent->getDebugBar()->getCollector( 'exceptions' );
-                $excCollector->addThrowable( $exception );
+                $excCollector = $debugBarComponent->getDebugBar()->getCollector('exceptions');
+                $excCollector->addThrowable($exception);
 
                 echo <<<HTML
-        <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
     <head>
         <title></title>
@@ -82,7 +84,7 @@ HTML;
 </html>
 HTML;
             } catch (DebugBarException $e) {
-                Registry::getLogger()->error($e);
+                Registry::getLogger()->error($e->getMessage());
                 Registry::getUtilsView()->addErrorToDisplay($e);
             }
         }
