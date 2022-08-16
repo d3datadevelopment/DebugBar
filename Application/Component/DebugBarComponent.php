@@ -22,6 +22,9 @@ use D3\DebugBar\Application\Models\Collectors\SmartyCollector;
 use D3\DebugBar\Application\Models\TimeDataCollectorHandler;
 use DebugBar\Bridge\DoctrineCollector;
 use DebugBar\Bridge\MonologCollector;
+use DebugBar\Bridge\NamespacedTwigProfileCollector;
+use DebugBar\Bridge\Twig\TwigCollector;
+use DebugBar\Bridge\TwigProfileCollector;
 use DebugBar\DataCollector\ExceptionsCollector;
 use DebugBar\DataCollector\MemoryCollector;
 use DebugBar\DataCollector\MessagesCollector;
@@ -38,8 +41,13 @@ use OxidEsales\Eshop\Core\Controller\BaseController;
 use OxidEsales\Eshop\Core\DatabaseProvider;
 use OxidEsales\Eshop\Core\Exception\DatabaseConnectionException;
 use OxidEsales\Eshop\Core\Registry;
+use OxidEsales\EshopCommunity\Internal\Container\ContainerFactory;
+use OxidEsales\Twig\Loader\ContentTemplateLoader;
 use ReflectionClass;
 use ReflectionException;
+use Twig\Environment;
+use Twig\Extension\ProfilerExtension;
+use Twig\Profiler\Profile;
 
 class DebugBarComponent extends BaseController
 {
@@ -166,10 +174,22 @@ class DebugBarComponent extends BaseController
         $debugbar->addCollector(new MemoryCollector());
         $debugbar->addCollector(new ExceptionsCollector());
 
+        /*
+        $container = ContainerFactory::getInstance()->getContainer();
+        /** @var ContentTemplateLoader $contentTemplateLoader */
+        /*
+        $contentTemplateLoader = $container->get(ContentTemplateLoader::class);
+
+        $twigEnv = new Environment($contentTemplateLoader);
+        $twigProfile = new Profile();
+        $twigEnv->addExtension(new ProfilerExtension($twigProfile));
+        */
+
         // add custom collectors
         $debugbar->addCollector($this->getOxidShopCollector());
         $debugbar->addCollector($this->getOxidConfigCollector());
         $debugbar->addCollector($this->getSmartyCollector());
+        //$debugbar->addCollector(new NamespacedTwigProfileCollector($twigProfile, $contentTemplateLoader));
         $debugbar->addCollector($this->getMonologCollector());
         $debugbar->addCollector($this->getDoctrineCollector());
         $debugbar->addCollector($this->getOxidVersionCollector());
