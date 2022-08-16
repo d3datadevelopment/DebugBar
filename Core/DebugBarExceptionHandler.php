@@ -18,8 +18,7 @@ namespace D3\DebugBar\Core;
 use D3\DebugBar\Application\Component\DebugBarComponent;
 use DebugBar\DataCollector\ExceptionsCollector;
 use DebugBar\DebugBarException;
-use OxidEsales\Eshop\Application\Controller\FrontendController;
-use OxidEsales\Eshop\Core\Exception\DatabaseException;
+use OxidEsales\Eshop\Core\ConfigFile;
 use OxidEsales\Eshop\Core\Exception\ExceptionHandler;
 use OxidEsales\Eshop\Core\Registry;
 use OxidEsales\EshopCommunity\Internal\Framework\Logger\LoggerServiceFactory;
@@ -32,12 +31,11 @@ class DebugBarExceptionHandler
      * Handler for uncaught exceptions.
      *
      * @param Throwable $exception exception object
-     * @throws DebugBarException
      */
     public function handleUncaughtException(Throwable $exception)
     {
         try {
-            $debugMode = (bool) \OxidEsales\Eshop\Core\Registry::get(\OxidEsales\Eshop\Core\ConfigFile::class)->getVar('iDebug');
+            $debugMode = (bool) Registry::get( ConfigFile::class)->getVar( 'iDebug');
             $defaultExceptionHandler = new ExceptionHandler($debugMode);
             $defaultExceptionHandler->writeExceptionToLog($exception);
         } catch (Throwable $loggerException) {
@@ -46,7 +44,7 @@ class DebugBarExceptionHandler
              * Try again to log original exception (without DI container) in order to show the root cause of a problem.
              */
             try {
-                $loggerServiceFactory = new LoggerServiceFactory(new Context(Registry::getConfig()));
+                $loggerServiceFactory = new LoggerServiceFactory(new Context());
                 $logger = $loggerServiceFactory->getLogger();
                 $logger->error($exception->getTraceAsString());
             } catch (Throwable $throwableWithoutPossibilityToWriteToLogFile) {
@@ -55,41 +53,38 @@ class DebugBarExceptionHandler
         }
 
         global $debugBarSet;
+
         if ($debugBarSet !== 1 && false === isAdmin()) {
-            /** @var DebugBarComponent $debugBarComponent */
-            $debugBarComponent = oxNew( DebugBarComponent::class );
+            try {
+                /** @var DebugBarComponent $debugBarComponent */
+                $debugBarComponent = oxNew( DebugBarComponent::class );
 
-            /** @var ExceptionsCollector $excCollector */
-            $excCollector = $debugBarComponent->getDebugBar()->getCollector('exceptions');
-            $excCollector->addThrowable($exception);
+                /** @var ExceptionsCollector $excCollector */
+                $excCollector = $debugBarComponent->getDebugBar()->getCollector( 'exceptions' );
+                $excCollector->addThrowable( $exception );
 
-            echo <<<HTML
-    <!DOCTYPE html>
-<html>
+                echo <<<HTML
+        <!DOCTYPE html>
+<html lang="en">
     <head>
+        <title></title>
 HTML;
-            echo $debugBarComponent->getRenderer()->renderHead();
-            $debugBarComponent->addTimelineMessures();
-            echo <<<HTML
+                echo $debugBarComponent->getRenderer()->renderHead();
+                $debugBarComponent->addTimelineMessures();
+                echo <<<HTML
     </head>
     <body>
 HTML;
-            $debugBarSet = 1;
-            echo $debugBarComponent->getRenderer()->render();
-            echo <<<HTML
+                $debugBarSet = 1;
+                echo $debugBarComponent->getRenderer()->render();
+                echo <<<HTML
     </body>
 </html>
 HTML;
+            } catch (DebugBarException $e) {
+                Registry::getLogger()->error($e);
+                Registry::getUtilsView()->addErrorToDisplay($e);
+            }
         }
-    }
-
-    /**
-     * @param DatabaseException $exception
-     * @return void
-     * @throws DebugBarException
-     */
-    public function handleDatabaseException(DatabaseException $exception)
-    {
-        $this->handleUncaughtException($exception);
     }
 }

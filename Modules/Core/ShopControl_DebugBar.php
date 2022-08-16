@@ -16,138 +16,80 @@ declare(strict_types=1);
 namespace D3\DebugBar\Modules\Core;
 
 use D3\DebugBar\Application\Component\DebugBarComponent;
-use D3\DebugBar\Application\Models\Exceptions\CompileErrorException;
-use D3\DebugBar\Application\Models\Exceptions\CoreErrorException;
-use D3\DebugBar\Application\Models\Exceptions\ParseException;
-use D3\DebugBar\Application\Models\Exceptions\UserErrorException;
+use D3\DebugBar\Application\Models\DebugBarHandler;
 use D3\DebugBar\Core\DebugBarExceptionHandler;
-use DebugBar\DataCollector\ExceptionsCollector;
-use ErrorException;
-use OxidEsales\Eshop\Application\Controller\FrontendController;
+use OxidEsales\Eshop\Core\Exception\StandardException;
 use OxidEsales\Eshop\Core\Registry;
+use Throwable;
 
 class ShopControl_DebugBar extends ShopControl_DebugBar_parent
 {
-    /**
-     * @throws ErrorException
-     */
     public function __construct()
     {
-        $this->d3DebugBarSetErrorHandler();;
-        $this->d3DebugBarSetExceptionHandler();
-        $this->d3AddDebugBarComponent();
+        $handler = oxNew(DebugBarHandler::class);
+
+        $handler->setErrorHandler();
+        $handler->setExceptionHandler();
+        $handler->addDebugBarComponent();
 
         parent::__construct();
     }
 
     /**
-     * @return void
-     * @throws ErrorException
+     * @param string|null $controllerKey
+     * @param string|null $function
+     * @param string|null $parameters
+     * @param string|null $viewsChain
      */
-    public function d3DebugBarSetErrorHandler()
+    public function start($controllerKey = null, $function = null, $parameters = null, $viewsChain = null)
     {
-        if ($this->d3CanActivateDebugBar()) {
-            set_error_handler(
-                function( $severity, $message, $file, $line ) {
-                    if ( 0 === error_reporting() || !( error_reporting() & $severity ) ) {
-                        // This error code is not included in error_reporting.
-                        return false;
-                    }
+        parent::start();
 
-                    $smartyTemplate = $this->getSmartyTemplateLocationFromError( $message );
-                    if ( is_array( $smartyTemplate ) ) {
-                        [ $file, $line ] = $smartyTemplate;
-                    }
+        global $debugBarSet, $debugBarErrorOccured;
 
-                    switch($severity) {
-                        case E_CORE_ERROR:
-                            throw new CoreErrorException($message, 0, $severity, $file, $line);
-                        case E_COMPILE_ERROR:
-                            throw new CompileErrorException($message, 0, $severity, $file, $line);
-                        case E_USER_ERROR:
-                            throw new UserErrorException($message, 0, $severity, $file, $line);
-                        case E_PARSE:
-                            throw new ParseException($message, 0, $severity, $file, $line);
-                        case E_ERROR:
-                        default:
-                            throw new ErrorException($message, 0, $severity, $file, $line);
-                    }
-                },
-                E_ERROR | E_CORE_ERROR | E_COMPILE_ERROR | E_USER_ERROR | E_PARSE
-            );
-        }
-    }
-
-    /**
-     * @return void
-     */
-    protected function d3DebugBarSetExceptionHandler(): void
-    {
-        if ($this->d3CanActivateDebugBar()) {
-            set_exception_handler( [
-                new DebugBarExceptionHandler(),
-                'handleUncaughtException'
-            ] );
-        }
-    }
-
-    /**
-     * @param $messsage
-     * @return array|null
-     */
-    protected function getSmartyTemplateLocationFromError($messsage)
-    {
-        if (stristr($messsage, 'Smarty error: [in ')) {
-            $start = strpos($messsage, '[')+1;
-            $end = strpos($messsage, ']');
-            $parts = explode(' ', substr($messsage, $start, $end - $start));
-            return [Registry::getConfig()->getTemplateDir(isAdmin()).$parts[1], (int) $parts[3]];
-        }
-
-        return null;
-    }
-
-    /**
-     * @return void
-     */
-    protected function d3AddDebugBarComponent(): void
-    {
-        if ($this->d3CanActivateDebugBar()) {
-            $userComponentNames = Registry::getConfig()->getConfigParam( 'aUserComponentNames' );
-            $d3CmpName          = DebugBarComponent::class;
-            $blDontUseCache     = 1;
-
-            if ( ! is_array( $userComponentNames ) ) {
-                $userComponentNames = [];
-            }
-
-            if ( ! in_array( $d3CmpName, array_keys( $userComponentNames ) ) ) {
-                $userComponentNames[ $d3CmpName ] = $blDontUseCache;
-                Registry::getConfig()->setConfigParam( 'aUserComponentNames', $userComponentNames );
-            }
-        }
-    }
-
-    /**
-     * @return bool
-     */
-    protected function d3CanActivateDebugBar(): bool
-    {
-        return false === isAdmin();
-    }
-
-    public function __destruct()
-    {
-        global $debugBarSet;
-        if (!isAdmin() && $debugBarSet !== 1) {
+        if (!isAdmin() && $debugBarSet !== 1 && $debugBarErrorOccured !== 1) {
             $activeView =  Registry::getConfig()->getTopActiveView();
             /** @var DebugBarComponent|null $debugBarComponent */
             $debugBarComponent = $activeView->getComponent(DebugBarComponent::class);
             if ($debugBarComponent) {
+                $debugBarSet = 1;
                 echo $debugBarComponent->getRenderer()->renderHead();
                 $debugBarComponent->addTimelineMessures();
                 echo $debugBarComponent->getRenderer()->render();
             }
         }
+    }
+
+    /**
+     * @param Throwable $exception
+     */
+    protected function debugBarHandleException(Throwable $exception)
+    {
+        $exceptionHandler = new DebugBarExceptionHandler();
+        $exceptionHandler->handleUncaughtException($exception);
+    }
+
+    /**
+     * @param StandardException $exception
+     */
+    protected function _handleSystemException($exception)
+    {
+        $this->debugBarHandleException($exception);
+    }
+
+    /**
+     * @param StandardException $exception
+     */
+    protected function _handleCookieException($exception)
+    {
+        $this->debugBarHandleException($exception);
+    }
+
+    /**
+     * @param StandardException $exception
+     */
+    protected function _handleBaseException($exception)
+    {
+        $this->debugBarHandleException($exception);
     }
 }
