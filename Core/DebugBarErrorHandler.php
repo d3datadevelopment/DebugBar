@@ -15,6 +15,7 @@ declare(strict_types=1);
 
 namespace D3\DebugBar\Core;
 
+use D3\DebugBar\Application\Models\AvailabilityCheck;
 use D3\DebugBar\Application\Models\Exceptions\CompileErrorException;
 use D3\DebugBar\Application\Models\Exceptions\CoreErrorException;
 use D3\DebugBar\Application\Models\Exceptions\ParseException;
@@ -39,8 +40,7 @@ class DebugBarErrorHandler
      */
     public function callback(int $severity, string $message, string $file, int $line)
     {
-        global $debugBarErrorOccured;
-        $debugBarErrorOccured = 1;
+        AvailabilityCheck::markErrorOccured();
 
         if (0 === error_reporting() || !(error_reporting() & $severity)) {
             // This error code is not included in error_reporting.

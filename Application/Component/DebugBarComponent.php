@@ -15,10 +15,12 @@ declare(strict_types=1);
 
 namespace D3\DebugBar\Application\Component;
 
+use D3\DebugBar\Application\Models\AvailabilityCheck;
 use D3\DebugBar\Application\Models\Collectors\OxidConfigCollector;
 use D3\DebugBar\Application\Models\Collectors\OxidShopCollector;
 use D3\DebugBar\Application\Models\Collectors\OxidVersionCollector;
 use D3\DebugBar\Application\Models\Collectors\SmartyCollector;
+use D3\DebugBar\Application\Models\Exceptions\UnavailableException;
 use D3\DebugBar\Application\Models\TimeDataCollectorHandler;
 use DebugBar\Bridge\DoctrineCollector;
 use DebugBar\Bridge\MonologCollector;
@@ -43,8 +45,8 @@ use ReflectionException;
 
 class DebugBarComponent extends BaseController
 {
-    /** @var DebugBar */
-    protected $debugBar;
+    /** @var DebugBar|null */
+    protected $debugBar = null;
     /** @var JavascriptRenderer */
     protected $debugBarRenderer;
 
@@ -63,7 +65,7 @@ class DebugBarComponent extends BaseController
     {
         parent::__construct();
 
-        if (false === isAdmin()) {
+        if (AvailabilityCheck::isAvailable()) {
             $debugbar = new DebugBar();
 
             $this->addCollectors($debugbar);
@@ -180,6 +182,10 @@ class DebugBarComponent extends BaseController
      */
     public function addTimelineMessures(): void
     {
+        if (false === $this->debugBar instanceof DebugBar) {
+            throw new UnavailableException();
+        }
+
         $collectors = $this->debugBar->getCollectors();
         $collectors['time'] = TimeDataCollectorHandler::getInstance();
 
@@ -191,9 +197,14 @@ class DebugBarComponent extends BaseController
 
     /**
      * @return DebugBar
+     * @throws UnavailableException
      */
     public function getDebugBar(): DebugBar
     {
+        if (false === $this->debugBar instanceof DebugBar) {
+            throw new UnavailableException();
+        }
+
         return $this->debugBar;
     }
 

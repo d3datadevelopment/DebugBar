@@ -12,6 +12,5 @@ parameters:
         - '#Offset .* does not exist on array{function: .*}.#'
         - '#ShopControl_DebugBar::_handle.*Exception\(\) has no return type specified#'
         - '#ShopControl_DebugBar::start\(\) has no return type specified.#'
-        - '#Config_DebugBar::getExceptionHandler\(\) should be compatible with return type #'
         - '#UtilsView::addErrorToDisplay\(\) expects OxidEsales\\Eshop\\Core\\Contract\\IDisplayError#'
         - '#PHPDoc tag @throws with type .*\\ContainerExceptionInterface is not subtype of Throwable#'

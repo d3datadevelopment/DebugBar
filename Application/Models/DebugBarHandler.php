@@ -27,7 +27,7 @@ class DebugBarHandler
      */
     public function setErrorHandler(): void
     {
-        if ($this->d3CanActivateDebugBar()) {
+        if (AvailabilityCheck::isAvailable()) {
             /** @var callable $callable */
             $callable = [
                 new DebugBarErrorHandler(),
@@ -50,7 +50,7 @@ class DebugBarHandler
      */
     public function setExceptionHandler(): void
     {
-        if ($this->d3CanActivateDebugBar()) {
+        if (AvailabilityCheck::isAvailable()) {
             set_exception_handler([
                new DebugBarExceptionHandler(),
                'handleUncaughtException',
@@ -63,7 +63,7 @@ class DebugBarHandler
      */
     public function addDebugBarComponent(): void
     {
-        if ($this->d3CanActivateDebugBar()) {
+        if (AvailabilityCheck::isAvailable()) {
             $userComponentNames = Registry::getConfig()->getConfigParam('aUserComponentNames');
             $d3CmpName          = DebugBarComponent::class;
             $blDontUseCache     = 1;
@@ -77,13 +77,5 @@ class DebugBarHandler
                 Registry::getConfig()->setConfigParam('aUserComponentNames', $userComponentNames);
             }
         }
-    }
-
-    /**
-     * @return bool
-     */
-    protected function d3CanActivateDebugBar(): bool
-    {
-        return false === isAdmin();
     }
 }

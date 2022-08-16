@@ -16,6 +16,7 @@ declare(strict_types=1);
 namespace D3\DebugBar\Modules\Core;
 
 use D3\DebugBar\Application\Component\DebugBarComponent;
+use D3\DebugBar\Application\Models\AvailabilityCheck;
 use D3\DebugBar\Application\Models\DebugBarHandler;
 use D3\DebugBar\Core\DebugBarExceptionHandler;
 use OxidEsales\Eshop\Core\Exception\StandardException;
@@ -45,14 +46,12 @@ class ShopControl_DebugBar extends ShopControl_DebugBar_parent
     {
         parent::start();
 
-        global $debugBarSet, $debugBarErrorOccured;
-
-        if (!isAdmin() && $debugBarSet !== 1 && $debugBarErrorOccured !== 1) {
+        if (AvailabilityCheck::isAvailable() && AvailabilityCheck::ifDebugBarNotSet() && AvailabilityCheck::ifNoErrorOccured()) {
             $activeView =  Registry::getConfig()->getTopActiveView();
             /** @var DebugBarComponent|null $debugBarComponent */
             $debugBarComponent = $activeView->getComponent(DebugBarComponent::class);
             if ($debugBarComponent) {
-                $debugBarSet = 1;
+                AvailabilityCheck::markDebugBarAsSet();
                 echo $debugBarComponent->getRenderer()->renderHead();
                 $debugBarComponent->addTimelineMessures();
                 echo $debugBarComponent->getRenderer()->render();

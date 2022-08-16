@@ -14,6 +14,8 @@
 declare(strict_types=1);
 
 use D3\DebugBar\Application\Component\DebugBarComponent;
+use D3\DebugBar\Application\Models\AvailabilityCheck;
+use D3\DebugBar\Application\Models\Exceptions\UnavailableException;
 use D3\DebugBar\Application\Models\TimeDataCollectorHandler;
 use DebugBar\DataCollector\MessagesCollector;
 use DebugBar\DebugBarException;
@@ -60,7 +62,6 @@ function stopProfile(string $sProfileName): void
     $timeDataCollector = TimeDataCollectorHandler::getInstance();
     $timeDataCollector->stopMeasure($hash);
 
-
     global $aStartTimes;
     global $executionCounts;
     if (!isset($executionCounts[$sProfileName])) {
@@ -90,17 +91,23 @@ function debugVar($mVar, bool $blToFile = false): void
             fclose($f);
         }
     } else {
-        if (!isAdmin()) {
+        try {
+            if (! AvailabilityCheck::isAvailable()) {
+                throw new UnavailableException();
+            }
             $activeView = Registry::getConfig()->getTopActiveView();
-            /** @var DebugBarComponent $debugBarComponent */
+            /** @var DebugBarComponent|null $debugBarComponent */
             $debugBarComponent = $activeView->getComponent(DebugBarComponent::class);
+            if ($debugBarComponent === null) {
+                throw new UnavailableException();
+            }
             /** @var MessagesCollector $messages */
             $messages = $debugBarComponent->getDebugBar()->getCollector('messages');
-            $trace = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS);
+            $trace    = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS);
             //$location = $trace[1]['class'] . '::' . $trace[1]['function']. '(' . $trace[0]['line'] . ')';
             $location = $trace[1]['class'] . '::' . $trace[1]['function'];
             $messages->addMessage($mVar, $location);
-        } else {
+        } catch (UnavailableException $e) {
             dumpVar($mVar, $blToFile);
         }
     }

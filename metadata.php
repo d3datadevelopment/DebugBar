@@ -46,6 +46,13 @@ $aModule = [
         'onActivate'    => '\D3\DebugBar\Setup\Events::onActivate',
     ],
     'templates'   => [],
-    'settings'    => [],
+    'settings'    => [
+        [
+            'group'     => $sModuleId.'_general',
+            'name'      => $sModuleId.'_showForAdminUsersOnly',
+            'type'      => 'bool',
+            'value'     => false,
+        ],
+    ],
     'blocks'      => [],
 ];

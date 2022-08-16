@@ -27,7 +27,7 @@ class Events
         /** @var string $shopDir */
         $shopDir = Registry::getConfig()->getConfigParam('sShopDir');
         if (false === file_exists(
-            rtrim($shopDir, '/').'/out/debugbar/debugbar.jas'
+            rtrim($shopDir, '/').'/out/debugbar/debugbar.js'
         )) {
             Registry::getUtilsView()->addErrorToDisplay(
                 'The asset files cannot be found. Have you forgotten an installation step described in <a href="https://git.d3data.de/D3Public/DebugBar/src/branch/main/README.en.md">README</a>? Then please run the installation again.'.

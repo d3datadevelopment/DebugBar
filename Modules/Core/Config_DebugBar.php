@@ -15,15 +15,21 @@ declare(strict_types=1);
 
 namespace D3\DebugBar\Modules\Core;
 
+use D3\DebugBar\Application\Models\AvailabilityCheck;
 use D3\DebugBar\Core\DebugBarExceptionHandler;
+use OxidEsales\Eshop\Core\Exception\ExceptionHandler;
 
 class Config_DebugBar extends Config_DebugBar_parent
 {
     /**
-     * @return DebugBarExceptionHandler
+     * @return DebugBarExceptionHandler|ExceptionHandler
      */
     protected function getExceptionHandler()
     {
-        return new DebugBarExceptionHandler();
+        if (AvailabilityCheck::isAvailable()) {
+            return new DebugBarExceptionHandler();
+        }
+
+        return parent::getExceptionHandler();
     }
 }

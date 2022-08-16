@@ -16,6 +16,8 @@ declare(strict_types=1);
 namespace D3\DebugBar\Core;
 
 use D3\DebugBar\Application\Component\DebugBarComponent;
+use D3\DebugBar\Application\Models\AvailabilityCheck;
+use D3\DebugBar\Application\Models\Exceptions\UnavailableException;
 use DebugBar\DataCollector\ExceptionsCollector;
 use DebugBar\DebugBarException;
 use OxidEsales\Eshop\Core\ConfigFile;
@@ -42,7 +44,7 @@ class DebugBarExceptionHandler
             $defaultExceptionHandler->writeExceptionToLog($exception);
         } catch (Throwable $loggerException) {
             /**
-             * Its not possible to get the logger from the DI container.
+             * It's not possible to get the logger from the DI container.
              * Try again to log original exception (without DI container) in order to show the root cause of a problem.
              */
             try {
@@ -50,13 +52,11 @@ class DebugBarExceptionHandler
                 $logger = $loggerServiceFactory->getLogger();
                 $logger->error($exception->getTraceAsString());
             } catch (Throwable $throwableWithoutPossibilityToWriteToLogFile) {
-                // It is not possible to log because e.g. the log file is not writable.
+                // It's not possible to log because e.g. the log file is not writable.
             }
         }
 
-        global $debugBarSet;
-
-        if ($debugBarSet !== 1 && false === isAdmin()) {
+        if (AvailabilityCheck::isAvailable() && AvailabilityCheck::ifDebugBarNotSet()) {
             try {
                 /** @var DebugBarComponent $debugBarComponent */
                 $debugBarComponent = oxNew(DebugBarComponent::class);
@@ -77,13 +77,13 @@ HTML;
     </head>
     <body>
 HTML;
-                $debugBarSet = 1;
+                AvailabilityCheck::markDebugBarAsSet();
                 echo $debugBarComponent->getRenderer()->render();
                 echo <<<HTML
     </body>
 </html>
 HTML;
-            } catch (DebugBarException $e) {
+            } catch (DebugBarException|UnavailableException $e) {
                 Registry::getLogger()->error($e->getMessage());
                 Registry::getUtilsView()->addErrorToDisplay($e);
             }
