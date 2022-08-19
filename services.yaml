@@ -5,5 +5,5 @@ services:
 
   Psr\Log\LoggerInterface:
     class: Monolog\Logger
-    factory: 'OxidEsales\EshopCommunity\Internal\Framework\Logger\Factory\LoggerFactoryInterface:create'
+    factory: ['@OxidEsales\EshopCommunity\Internal\Framework\Logger\Factory\LoggerFactoryInterface', 'create']
     public: true
