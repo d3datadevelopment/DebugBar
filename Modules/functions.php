@@ -97,7 +97,9 @@ function debugVar($mVar, bool $blToFile = false): void
             }
             $activeView = Registry::getConfig()->getTopActiveView();
             /** @var DebugBarComponent|null $debugBarComponent */
-            $debugBarComponent = $activeView->getComponent(DebugBarComponent::class);
+            $debugBarComponent = method_exists($activeView, 'getComponent')
+                ? $activeView->getComponent(DebugBarComponent::class)
+                : null;
             if ($debugBarComponent === null) {
                 throw new UnavailableException();
             }

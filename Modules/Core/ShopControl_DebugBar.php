@@ -49,7 +49,9 @@ class ShopControl_DebugBar extends ShopControl_DebugBar_parent
         if (AvailabilityCheck::isAvailable() && AvailabilityCheck::ifDebugBarNotSet() && AvailabilityCheck::ifNoErrorOccured()) {
             $activeView =  Registry::getConfig()->getTopActiveView();
             /** @var DebugBarComponent|null $debugBarComponent */
-            $debugBarComponent = $activeView->getComponent(DebugBarComponent::class);
+            $debugBarComponent = method_exists($activeView, 'getComponent')
+                ? $activeView->getComponent(DebugBarComponent::class)
+                : null;
             if ($debugBarComponent) {
                 AvailabilityCheck::markDebugBarAsSet();
                 echo $debugBarComponent->getRenderer()->renderHead();
