@@ -41,7 +41,7 @@ Bitte tragen Sie den folgenden Abschnitt in die `composer.json` Ihres Projektes 
 Öffnen Sie eine Kommandozeile und navigieren Sie zum Stammverzeichnis des Shops (Elternverzeichnis von source und vendor). Führen Sie den folgenden Befehl aus. Passen Sie die Pfadangaben an Ihre Installationsumgebung an.
 
 ```bash
-php composer require d3/oxid-debugbar:^1.0
+php composer require d3/oxid-debugbar:^2.0
 ``` 
 
 Sofern nötig, bestätigen Sie bitte, dass Sie `composer-symlinker` und `composer-patches` erlauben, Code auszuführen.

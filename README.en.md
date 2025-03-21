@@ -41,7 +41,7 @@ Please enter the following section in the `composer.json` of your project:
 Open a command line and navigate to the root directory of the shop (parent directory of source and vendor). Execute the following command. Adapt the path details to your installation environment.
 
 ```bash
-php composer require d3/oxid-debugbar:^1.0
+php composer require d3/oxid-debugbar:^2.0
 ``` 
 
 If necessary, please confirm that you allow `composer-symlinker` and `composer-patches` to execute code.
