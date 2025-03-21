@@ -25,7 +25,7 @@ Please enter the following section in the `composer.json` of your project:
 ```
   "extra": {
     "ajgl-symlinks": {
-      "maximebf/debugbar": {
+      "php-debugbar/php-debugbar": {
         "src/DebugBar/Resources": "source/out/debugbar"
       }
     },
