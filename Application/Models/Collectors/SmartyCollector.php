@@ -27,36 +27,6 @@ class SmartyCollector extends DataCollector implements Renderable
     protected $smarty;
 
     /**
-     * @var bool
-     */
-    protected $useHtmlVarDumper = false;
-
-    /**
-     * Sets a flag indicating whether the Symfony HtmlDumper will be used to dump variables for
-     * rich variable rendering.
-     *
-     * @param bool $value
-     * @return $this
-     */
-    public function useHtmlVarDumper(bool $value = true): SmartyCollector
-    {
-        $this->useHtmlVarDumper = $value;
-
-        return $this;
-    }
-
-    /**
-     * Indicates whether the Symfony HtmlDumper will be used to dump variables for rich variable
-     * rendering.
-     *
-     * @return bool
-     */
-    public function isHtmlVarDumperUsed(): bool
-    {
-        return $this->useHtmlVarDumper;
-    }
-
-    /**
      * @param Smarty $smarty
      */
     public function __construct(Smarty $smarty)
