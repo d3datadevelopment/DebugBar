@@ -19,7 +19,6 @@ use D3\DebugBar\Application\Models\AvailabilityCheck;
 use D3\DebugBar\Application\Models\Collectors\OxidConfigCollector;
 use D3\DebugBar\Application\Models\Collectors\OxidShopCollector;
 use D3\DebugBar\Application\Models\Collectors\OxidVersionCollector;
-use D3\DebugBar\Application\Models\Collectors\SmartyCollector;
 use D3\DebugBar\Application\Models\Collectors\TemplateVariablesCollector;
 use D3\DebugBar\Application\Models\Exceptions\UnavailableException;
 use D3\DebugBar\Application\Models\TimeDataCollectorHandler;
@@ -107,15 +106,6 @@ class DebugBarComponent extends BaseController
         $debugStack = new DebugStack();
         $connection->getConfiguration()->setSQLLogger($debugStack);
         return new DoctrineCollector($debugStack);
-    }
-
-    /**
-     * @return SmartyCollector
-     */
-    public function getSmartyCollector(): SmartyCollector
-    {
-        $smarty = Registry::getUtilsView()->getSmarty();
-        return new SmartyCollector($smarty);
     }
 
     /**
