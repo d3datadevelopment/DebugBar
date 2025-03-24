@@ -15,7 +15,6 @@ declare(strict_types=1);
 
 namespace D3\DebugBar\Application\Models;
 
-use OxidEsales\Eshop\Application\Model\User;
 use OxidEsales\Eshop\Core\Registry;
 
 class AvailabilityCheck
@@ -28,7 +27,7 @@ class AvailabilityCheck
         return !isAdmin() && (
             Registry::getConfig()->getShopConfVar('d3debugbar_showForAdminUsersOnly') != true ||
             self::userIsMallAdmin()
-        );
+        ) && !Registry::getConfig()->isProductiveMode();
     }
 
     /**
