@@ -20,37 +20,63 @@ use DebugBar\DataCollector\Renderable;
 use OxidEsales\Eshop\Core\Config;
 use OxidEsales\Eshop\Core\ConfigFile;
 use OxidEsales\Eshop\Core\Registry;
+use OxidEsales\EshopCommunity\Internal\Container\ContainerFactory;
+use OxidEsales\EshopCommunity\Internal\Framework\Module\Configuration\Bridge\ShopConfigurationDaoBridge;
+use OxidEsales\EshopCommunity\Internal\Framework\Module\Configuration\Bridge\ShopConfigurationDaoBridgeInterface;
+use Psr\Container\ContainerExceptionInterface;
+use Psr\Container\NotFoundExceptionInterface;
 use ReflectionClass;
 use ReflectionException;
 
 class OxidConfigCollector extends DataCollector implements Renderable
 {
-    /** @var Config */
-    protected $config;
+    public const HIDDEN_TEXT = '[hidden]';
 
-    /** @var array  */
-    protected $configVars = [];
-
-    /**
-     * @var bool
-     */
-    protected $useHtmlVarDumper = false;
+    protected array $configVars = [];
 
     /**
      * @param Config $config
      *
+     * @throws ContainerExceptionInterface
+     * @throws NotFoundExceptionInterface
      * @throws ReflectionException
      */
     public function __construct(Config $config)
     {
         $config->init();
-        $this->config = $config;
-        $this->configVars = array_merge(
-            (array) $this->getNonPublicProperty($this->config, '_aConfigParams'),
-            Registry::get(ConfigFile::class)->getVars()
-        );
+
+        $this->configVars['config table'] = (array) $this->getNonPublicProperty($config, '_aConfigParams');
+        $this->configVars['config file'] = Registry::get(ConfigFile::class)->getVars();
+        $this->configVars = array_merge($this->configVars, $this->getModuleSettings());
 
         $this->sanitizeCriticalProperties();
+
+        $this->useHtmlVarDumper(false);
+    }
+
+    /**
+     * @return array
+     * @throws ContainerExceptionInterface
+     * @throws NotFoundExceptionInterface
+     */
+    protected function getModuleSettings(): array
+    {
+        $container = ContainerFactory::getInstance()->getContainer();
+        /** @var ShopConfigurationDaoBridge $shopConfigurationDaoBridge */
+        $shopConfigurationDaoBridge = $container->get(ShopConfigurationDaoBridgeInterface::class);
+        $shopConfiguration = $shopConfigurationDaoBridge->get();
+
+        $moduleSettings = [];
+
+        foreach ($shopConfiguration->getModuleConfigurations() as $moduleConfiguration) {
+            foreach ($moduleConfiguration->getModuleSettings() as $setting) {
+                $moduleSettings[$moduleConfiguration->getId()][$setting->getName()] = $setting->getType() == 'hidden' ?
+                    self::HIDDEN_TEXT :
+                    $setting->getValue();
+            }
+        }
+
+        return $moduleSettings;
     }
 
     /**
@@ -62,11 +88,13 @@ class OxidConfigCollector extends DataCollector implements Renderable
         $specific = ['sSerialNr', 'aSerials', 'dbPwd'];
         $search = array_merge($generic, $specific);
 
-        array_walk($this->configVars, function ($item, $key) use ($search) {
-            if (in_array($key, $search)) {
-                $this->configVars[$key] = '[hidden]';
-            }
-        });
+        foreach ($this->configVars as $group => $values) {
+            array_walk( $this->configVars[$group], function( $item, $key ) use ( $group, $search ) {
+                if ( in_array( $key, $search ) ) {
+                    $this->configVars[$group][ $key ] = self::HIDDEN_TEXT;
+                }
+            } );
+        }
     }
 
     /**
@@ -76,7 +104,7 @@ class OxidConfigCollector extends DataCollector implements Renderable
      * @return mixed
      * @throws ReflectionException
      */
-    protected function getNonPublicProperty(object $object, string $propName)
+    protected function getNonPublicProperty(object $object, string $propName): mixed
     {
         $reflection = new ReflectionClass($object);
         $property = $reflection->getProperty($propName);
@@ -110,17 +138,6 @@ class OxidConfigCollector extends DataCollector implements Renderable
         }
 
         return ['vars' => $data, 'count' => count($data)];
-    }
-
-    /**
-     * Indicates whether the Symfony HtmlDumper will be used to dump variables for rich variable
-     * rendering.
-     *
-     * @return bool
-     */
-    public function isHtmlVarDumperUsed(): bool
-    {
-        return $this->useHtmlVarDumper;
     }
 
     /**
