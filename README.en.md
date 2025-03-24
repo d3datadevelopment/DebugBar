@@ -1,3 +1,7 @@
+![stability mature](https://img.shields.io/badge/stability-mature-008000.svg)
+[![latest tag](https://img.shields.io/packagist/v/d3/oxid-debugbar?label=release)](https://packagist.org/packages/d3/oxid-debugbar)
+![License](https://img.shields.io/packagist/l/d3/oxid-debugbar)
+
 [![deutsche Version](https://logos.oxidmodule.com/de2_xs.svg)](README.md)
 [![english version](https://logos.oxidmodule.com/en2_xs.svg)](README.en.md)
 
@@ -5,7 +9,7 @@
 
 The debug bar enables the display of relevant debug information in the shop frontend.
 
-![screenshot](screenshot.jpg "Screenshot")
+![screenshot](screenshot.png "Screenshot")
 
 ## Table of content
 
@@ -32,7 +36,7 @@ Please enter the following section in the `composer.json` of your project:
     "enable-patching": "true",
     "patches": {
       "oxid-esales/oxideshop-ce": {
-        "Add overridable functions for advanced profiling in Debug Bar": "https://git.d3data.de/D3Public/DebugBar/raw/branch/patches/overridablefunctions.patch"
+        "Add overridable functions for advanced profiling in Debug Bar": "https://git.d3data.de/D3Public/DebugBar/raw/branch/patches/overridablefunctions_2.0.patch"
       }
     }
   }
@@ -46,13 +50,19 @@ php composer require d3/oxid-debugbar:^2.0
 
 If necessary, please confirm that you allow `composer-symlinker` and `composer-patches` to execute code.
 
+```bash
+rm -rf vendor/oxid-esales/oxideshop-ce
+php composer install
+php composer update --lock
+```
+
 Have the files of the package `oxid-esales/oxideshop-ce` overwritten.
 
 Activate the module in Shopadmin under "Extensions -> Modules".
 
 ## How to use
 
-__Please note that the DebugBar contains security-relevant information. It should therefore not be activated under any circumstances in a freely accessible installation.__
+__Please note that the DebugBar contains security-relevant information. It should therefore never be activated in a public installation__.
 
 The DebugBar displays the following tabs:
 - Messages
@@ -65,8 +75,10 @@ The DebugBar displays the following tabs:
   shows basic shop information (edition, versions, theme information)
 - Configuration
   provides all configuration settings of the shop from database and config files
-- Smarty
+- Template variables
   lists all variables of the template engine that are available on the current shop page
+- Twig
+  shows Twig internal profiling (only when using the Twig Template Engine)
 - Monolog
   lists all log messages passed to the Monolog Logger
 - Database

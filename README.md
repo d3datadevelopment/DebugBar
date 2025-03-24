@@ -1,3 +1,7 @@
+![stability mature](https://img.shields.io/badge/stability-mature-008000.svg)
+[![latest tag](https://img.shields.io/packagist/v/d3/oxid-debugbar?label=release)](https://packagist.org/packages/d3/oxid-debugbar)
+![License](https://img.shields.io/packagist/l/d3/oxid-debugbar)
+
 [![deutsche Version](https://logos.oxidmodule.com/de2_xs.svg)](README.md)
 [![english version](https://logos.oxidmodule.com/en2_xs.svg)](README.en.md)
 
@@ -5,7 +9,7 @@
 
 Die Debug Bar ermöglicht die Darstellung relevanter Debuginformationen im Shopfrontend.
 
-![screenshot](screenshot.jpg "Screenshot")
+![screenshot](screenshot.png "Screenshot")
 
 ## Inhaltsverzeichnis
 
@@ -32,7 +36,7 @@ Bitte tragen Sie den folgenden Abschnitt in die `composer.json` Ihres Projektes 
     "enable-patching": "true",
     "patches": {
       "oxid-esales/oxideshop-ce": {
-        "Add overridable functions for advanced profiling in Debug Bar": "https://git.d3data.de/D3Public/DebugBar/raw/branch/patches/overridablefunctions.patch"
+        "Add overridable functions for advanced profiling in Debug Bar": "https://git.d3data.de/D3Public/DebugBar/raw/branch/patches/overridablefunctions_2.0.patch"
       }
     }
   }
@@ -45,6 +49,12 @@ php composer require d3/oxid-debugbar:^2.0
 ``` 
 
 Sofern nötig, bestätigen Sie bitte, dass Sie `composer-symlinker` und `composer-patches` erlauben, Code auszuführen.
+
+```bash
+rm -rf vendor/oxid-esales/oxideshop-ce
+php composer install
+php composer update --lock
+```
 
 Lassen Sie die Dateien des Paketes `oxid-esales/oxideshop-ce` überschreiben.
 
@@ -65,8 +75,10 @@ Die DebugBar stellt folgende Tabs dar:
   zeigt grundlegende Shopinformationen (Edition, Versionen, Themeinformationen)
 - Configuration
   stellt alle Konfigurationseinstellungen des Shops aus Datenbank und config-Dateien zur Verfügung
-- Smarty
+- Template Variablen
   listet alle Variablen der Template-Engine, die auf der aktuellen Shopseite zur Verfügung stehen
+- Twig
+  zeigt Twig internes Profiling (nur bei Verwendung der Twig Template Engine)
 - Monolog
   listet alle an den Monolog Logger übergebenen Lognachrichten
 - Database
