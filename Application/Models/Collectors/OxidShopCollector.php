@@ -20,28 +20,21 @@ use DebugBar\DataCollector\DataCollector;
 use DebugBar\DataCollector\Renderable;
 use Exception;
 use OxidEsales\Eshop\Core\Config;
-use OxidEsales\Eshop\Core\Module\Module;
 use OxidEsales\Eshop\Core\ShopVersion;
 use OxidEsales\Eshop\Core\Theme;
 use OxidEsales\EshopCommunity\Internal\Container\ContainerFactory;
 use OxidEsales\EshopCommunity\Internal\Framework\Module\Configuration\Bridge\ShopConfigurationDaoBridge;
 use OxidEsales\EshopCommunity\Internal\Framework\Module\Configuration\Bridge\ShopConfigurationDaoBridgeInterface;
+use OxidEsales\EshopCommunity\Internal\Framework\Module\Configuration\DataObject\ModuleConfiguration;
 use OxidEsales\Facts\Facts;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\NotFoundExceptionInterface;
 
 class OxidShopCollector extends DataCollector implements Renderable
 {
-    /** @var Config */
-    protected $config;
+    protected Config $config;
 
-    /** @var array  */
-    protected $configVars = [];
-
-    /**
-     * @var bool
-     */
-    protected $useHtmlVarDumper = true;
+    protected array $configVars = [];
 
     /**
      * @throws ContainerExceptionInterface
@@ -57,11 +50,11 @@ class OxidShopCollector extends DataCollector implements Renderable
         $parentThemeId = $parent ? $parent->getId() : '--';
 
         $moduleList = $this->getInstalledModules();
+        $list = [];
         array_walk(
             $moduleList,
-            function (Module &$module) {
-                $str = trim(strip_tags($module->getTitle())).' - '.$module->getInfo('version').' ';
-                $module = $str;
+            function (ModuleConfiguration $module) use (&$list) {
+                $list[] = trim(strip_tags(current($module->getTitle()))).' - '.$module->getVersion();
             }
         );
 
@@ -71,8 +64,10 @@ class OxidShopCollector extends DataCollector implements Renderable
             'CE Version:' => InstalledVersions::getVersion('oxid-esales/oxideshop-ce'),
             'Theme:' => $theme->getActiveThemeId(),
             'Parent Theme:' => $parentThemeId,
-            'Modules:'  => implode(chr(10), $moduleList),
+            'Modules:'  => $list,
         ];
+
+        $this->useHtmlVarDumper(false);
     }
 
     /**
@@ -104,17 +99,6 @@ class OxidShopCollector extends DataCollector implements Renderable
     }
 
     /**
-     * Indicates whether the Symfony HtmlDumper will be used to dump variables for rich variable
-     * rendering.
-     *
-     * @return bool
-     */
-    public function isHtmlVarDumperUsed(): bool
-    {
-        return $this->useHtmlVarDumper;
-    }
-
-    /**
      * @return array
      */
     public function getWidgets(): array
@@ -133,7 +117,7 @@ class OxidShopCollector extends DataCollector implements Renderable
     }
 
     /**
-     * @return array
+     * @return ModuleConfiguration[]
      * @throws ContainerExceptionInterface
      * @throws NotFoundExceptionInterface
      */
@@ -147,13 +131,13 @@ class OxidShopCollector extends DataCollector implements Renderable
         $modules = [];
 
         foreach ($shopConfiguration->getModuleConfigurations() as $moduleConfiguration) {
-            $module = oxNew(Module::class);
-            $module->load($moduleConfiguration->getId());
-            $modules[] = $module;
+            $modules[] = $moduleConfiguration;
         }
 
+        /** @var $a ModuleConfiguration */
+        /** @var $b ModuleConfiguration */
         usort($modules, function ($a, $b) {
-            return strcmp($a->getTitle(), $b->getTitle());
+            return strcmp(current($a->getTitle()), current($b->getTitle()));
         });
 
         return $modules;
