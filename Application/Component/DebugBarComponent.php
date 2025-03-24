@@ -20,6 +20,7 @@ use D3\DebugBar\Application\Models\Collectors\OxidConfigCollector;
 use D3\DebugBar\Application\Models\Collectors\OxidShopCollector;
 use D3\DebugBar\Application\Models\Collectors\OxidVersionCollector;
 use D3\DebugBar\Application\Models\Collectors\SmartyCollector;
+use D3\DebugBar\Application\Models\Collectors\TemplateVariablesCollector;
 use D3\DebugBar\Application\Models\Exceptions\UnavailableException;
 use D3\DebugBar\Application\Models\TimeDataCollectorHandler;
 use DebugBar\Bridge\DoctrineCollector;
@@ -118,6 +119,27 @@ class DebugBarComponent extends BaseController
     }
 
     /**
+     * @return TemplateVariablesCollector
+     * @throws ContainerExceptionInterface
+     * @throws NotFoundExceptionInterface
+     */
+    public function getTemplateVariablesCollector(): TemplateVariablesCollector
+    {
+        /** @var TemplateRenderer $renderer */
+        $renderer = ContainerFactory::getInstance()->getContainer()
+            ->get(TemplateRendererBridgeInterface::class)
+            ->getTemplateRenderer();
+        $templateEngine = $renderer->getTemplateEngine();
+
+        return new TemplateVariablesCollector(
+            array_merge(
+                $templateEngine->getGlobals(),
+                Registry::getConfig()->getActiveView()->getViewData()
+            )
+        );
+    }
+
+    /**
      * @return NamespacedTwigProfileCollector
      * @throws ContainerExceptionInterface
      * @throws NotFoundExceptionInterface
@@ -188,6 +210,7 @@ class DebugBarComponent extends BaseController
         // add custom collectors
         $debugbar->addCollector($this->getOxidShopCollector());
         $debugbar->addCollector($this->getOxidConfigCollector());
+        $debugbar->addCollector($this->getTemplateVariablesCollector());
 
         /** @var TemplateRendererBridge $templateRendererBridge */
         $templateRendererBridge = ContainerFactory::getInstance()->getContainer()->get(TemplateRendererBridgeInterface::class);
