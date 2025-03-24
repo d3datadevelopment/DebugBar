@@ -21,14 +21,13 @@ use OxidEsales\Eshop\Core\ShopControl;
 $sMetadataVersion = '2.1';
 
 $sModuleId = 'd3debugbar';
-$logo = '<img src="https://logos.oxidmodule.com/d3logo.svg" alt="(D3)" style="height:1em;width:1em">';
 
 /**
  * Module information
  */
 $aModule = [
     'id'          => $sModuleId,
-    'title'       => $logo.' DebugBar',
+    'title'       => '(D3) DebugBar',
     'description' => [
         'de' => '',
         'en' => '',
