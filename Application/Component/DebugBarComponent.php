@@ -133,8 +133,8 @@ class DebugBarComponent extends BaseController
 
         return new TemplateVariablesCollector(
             array_merge(
-                $templateEngine->getGlobals(),
-                Registry::getConfig()->getActiveView()->getViewData()
+                Registry::getConfig()->getActiveView()->getViewData(),
+                $templateEngine->getGlobals()
             )
         );
     }
