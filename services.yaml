@@ -7,3 +7,11 @@ services:
     class: Monolog\Logger
     factory: ['@OxidEsales\EshopCommunity\Internal\Framework\Logger\Factory\LoggerFactoryInterface', 'create']
     public: true
+
+  Twig\Profiler\Profile:
+    class: Twig\Profiler\Profile
+    public: true
+    shared: true
+
+  Twig\Extension\ProfilerExtension:
+    tags: [ 'twig.extension' ]

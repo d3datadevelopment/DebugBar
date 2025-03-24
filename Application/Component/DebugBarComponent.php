@@ -24,6 +24,7 @@ use D3\DebugBar\Application\Models\Exceptions\UnavailableException;
 use D3\DebugBar\Application\Models\TimeDataCollectorHandler;
 use DebugBar\Bridge\DoctrineCollector;
 use DebugBar\Bridge\MonologCollector;
+use DebugBar\Bridge\NamespacedTwigProfileCollector;
 use DebugBar\DataCollector\ExceptionsCollector;
 use DebugBar\DataCollector\MemoryCollector;
 use DebugBar\DataCollector\MessagesCollector;
@@ -37,18 +38,22 @@ use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Logging\DebugStack;
 use Monolog\Logger;
 use OxidEsales\Eshop\Core\Controller\BaseController;
-use OxidEsales\Eshop\Core\DatabaseProvider;
-use OxidEsales\Eshop\Core\Exception\DatabaseConnectionException;
 use OxidEsales\Eshop\Core\Registry;
+use OxidEsales\EshopCommunity\Internal\Container\ContainerFactory;
+use OxidEsales\EshopCommunity\Internal\Framework\Templating\TemplateRenderer;
+use OxidEsales\EshopCommunity\Internal\Framework\Templating\TemplateRendererBridge;
+use OxidEsales\EshopCommunity\Internal\Framework\Templating\TemplateRendererBridgeInterface;
+use OxidEsales\Twig\TwigEngine;
+use Psr\Container\ContainerExceptionInterface;
+use Psr\Container\NotFoundExceptionInterface;
 use ReflectionClass;
 use ReflectionException;
+use Twig\Profiler\Profile;
 
 class DebugBarComponent extends BaseController
 {
-    /** @var DebugBar|null */
-    protected $debugBar = null;
-    /** @var JavascriptRenderer */
-    protected $debugBarRenderer;
+    protected DebugBar|null $debugBar = null;
+    protected null|JavascriptRenderer $debugBarRenderer = null;
 
     /**
      * Marking object as component
@@ -57,9 +62,9 @@ class DebugBarComponent extends BaseController
     protected $_blIsComponent = true;
 
     /**
+     * @throws ContainerExceptionInterface
      * @throws DebugBarException
-     * @throws DatabaseConnectionException
-     * @throws ReflectionException
+     * @throws NotFoundExceptionInterface
      */
     public function __construct()
     {
@@ -113,6 +118,18 @@ class DebugBarComponent extends BaseController
     }
 
     /**
+     * @return NamespacedTwigProfileCollector
+     * @throws ContainerExceptionInterface
+     * @throws NotFoundExceptionInterface
+     */
+    public function getTwigCollector(): NamespacedTwigProfileCollector
+    {
+        /** @var Profile $profile */
+        $profile = ContainerFactory::getInstance()->getContainer()->get(Profile::class);
+        return new NamespacedTwigProfileCollector($profile);
+    }
+
+    /**
      * @return OxidShopCollector
      */
     public function getOxidShopCollector(): OxidShopCollector
@@ -154,9 +171,9 @@ class DebugBarComponent extends BaseController
     /**
      * @param DebugBar $debugbar
      * @return void
-     * @throws DatabaseConnectionException
+     * @throws ContainerExceptionInterface
      * @throws DebugBarException
-     * @throws ReflectionException
+     * @throws NotFoundExceptionInterface
      */
     public function addCollectors(DebugBar $debugbar): void
     {
@@ -171,7 +188,17 @@ class DebugBarComponent extends BaseController
         // add custom collectors
         $debugbar->addCollector($this->getOxidShopCollector());
         $debugbar->addCollector($this->getOxidConfigCollector());
-        $debugbar->addCollector($this->getSmartyCollector());
+
+        /** @var TemplateRendererBridge $templateRendererBridge */
+        $templateRendererBridge = ContainerFactory::getInstance()->getContainer()->get(TemplateRendererBridgeInterface::class);
+        switch (get_class($templateRendererBridge->getTemplateRenderer()->getTemplateEngine())) {
+            case TwigEngine::class:
+                $debugbar->addCollector($this->getTwigCollector());
+                break;
+            default:
+                dumpvar(get_class($templateRendererBridge->getTemplateRenderer()->getTemplateEngine()));
+        }
+
         $debugbar->addCollector($this->getMonologCollector());
         $debugbar->addCollector($this->getDoctrineCollector());
         $debugbar->addCollector($this->getOxidVersionCollector());
@@ -179,6 +206,8 @@ class DebugBarComponent extends BaseController
 
     /**
      * @return void
+     * @throws UnavailableException
+     * @throws ReflectionException
      */
     public function addTimelineMessures(): void
     {
