@@ -22,36 +22,6 @@ use OxidEsales\Eshop\Core\Registry;
 
 class TemplateVariablesCollector extends DataCollector implements Renderable
 {
-    /**
-     * @var bool
-     */
-    protected $useHtmlVarDumper = true;
-
-    /**
-     * Sets a flag indicating whether the Symfony HtmlDumper will be used to dump variables for
-     * rich variable rendering.
-     *
-     * @param bool $value
-     * @return $this
-     */
-    public function useHtmlVarDumper($value = true): TemplateVariablesCollector
-    {
-        $this->useHtmlVarDumper = $value;
-
-        return $this;
-    }
-
-    /**
-     * Indicates whether the Symfony HtmlDumper will be used to dump variables for rich variable
-     * rendering.
-     *
-     * @return bool
-     */
-    public function isHtmlVarDumperUsed()
-    {
-        return $this->useHtmlVarDumper;
-    }
-
     public function __construct(protected array $templateVariables)
     {
     }
