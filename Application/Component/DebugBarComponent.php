@@ -41,6 +41,7 @@ use Monolog\Logger;
 use OxidEsales\Eshop\Core\Controller\BaseController;
 use OxidEsales\Eshop\Core\Registry;
 use OxidEsales\EshopCommunity\Internal\Container\ContainerFactory;
+use OxidEsales\EshopCommunity\Internal\Framework\Database\ConnectionProviderInterface;
 use OxidEsales\EshopCommunity\Internal\Framework\Templating\TemplateRenderer;
 use OxidEsales\EshopCommunity\Internal\Framework\Templating\TemplateRendererBridge;
 use OxidEsales\EshopCommunity\Internal\Framework\Templating\TemplateRendererBridgeInterface;
@@ -95,16 +96,15 @@ class DebugBarComponent extends BaseController
 
     /**
      * @return DoctrineCollector
-     * @throws ReflectionException
+     * @throws ContainerExceptionInterface
      * @throws DebugBarException
-     * @throws DatabaseConnectionException
+     * @throws NotFoundExceptionInterface
      */
     public function getDoctrineCollector(): DoctrineCollector
     {
-        $db = DatabaseProvider::getDb();
-        $debugStack = new DebugStack();
         /** @var Connection $connection */
-        $connection = $this->getNonPublicProperty($db, 'connection');
+        $connection = ContainerFactory::getInstance()->getContainer()->get(ConnectionProviderInterface::class)->get();
+        $debugStack = new DebugStack();
         $connection->getConfiguration()->setSQLLogger($debugStack);
         return new DoctrineCollector($debugStack);
     }
@@ -173,21 +173,6 @@ class DebugBarComponent extends BaseController
     public function getOxidVersionCollector(): OxidVersionCollector
     {
         return oxNew(OxidVersionCollector::class);
-    }
-
-    /**
-     * @param object $object
-     * @param string $propName
-     *
-     * @return mixed
-     * @throws ReflectionException
-     */
-    protected function getNonPublicProperty(object $object, string $propName)
-    {
-        $reflection = new ReflectionClass($object);
-        $property = $reflection->getProperty($propName);
-        $property->setAccessible(true);
-        return $property->getValue($object);
     }
 
     /**
