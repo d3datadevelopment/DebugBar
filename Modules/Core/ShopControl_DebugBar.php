@@ -55,7 +55,7 @@ class ShopControl_DebugBar extends ShopControl_DebugBar_parent
             if ($debugBarComponent) {
                 AvailabilityCheck::markDebugBarAsSet();
                 echo $debugBarComponent->getRenderer()->renderHead();
-                $debugBarComponent->addTimelineMessures();
+                $debugBarComponent->addTimelineMeasures();
                 echo $debugBarComponent->getRenderer()->render();
             }
         }

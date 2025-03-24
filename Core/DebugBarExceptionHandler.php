@@ -72,7 +72,7 @@ class DebugBarExceptionHandler
         <title></title>
 HTML;
                 echo $debugBarComponent->getRenderer()->renderHead();
-                $debugBarComponent->addTimelineMessures();
+                $debugBarComponent->addTimelineMeasures();
                 echo <<<HTML
     </head>
     <body>

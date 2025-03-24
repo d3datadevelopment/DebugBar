@@ -217,7 +217,7 @@ class DebugBarComponent extends BaseController
      * @throws UnavailableException
      * @throws ReflectionException
      */
-    public function addTimelineMessures(): void
+    public function addTimelineMeasures(): void
     {
         if (false === $this->debugBar instanceof DebugBar) {
             throw new UnavailableException();
