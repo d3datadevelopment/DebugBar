@@ -1,8 +1,10 @@
 <?php
 
 /**
- * For the full copyright and license information, please view the LICENSE
- * file that was distributed with this source code.
+ * Copyright (c) D3 Data Development (Inh. Thomas Dartsch)
+ *
+ * For the full copyright and license information, please view
+ * the LICENSE file that was distributed with this source code.
  *
  * https://www.d3data.de
  *
@@ -89,11 +91,11 @@ class OxidConfigCollector extends DataCollector implements Renderable
         $search = array_merge($generic, $specific);
 
         foreach ($this->configVars as $group => $values) {
-            array_walk( $this->configVars[$group], function( $item, $key ) use ( $group, $search ) {
-                if ( in_array( $key, $search ) ) {
+            array_walk($this->configVars[$group], function ($item, $key) use ($group, $search) {
+                if (in_array($key, $search)) {
                     $this->configVars[$group][ $key ] = self::HIDDEN_TEXT;
                 }
-            } );
+            });
         }
     }
 

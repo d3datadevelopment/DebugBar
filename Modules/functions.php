@@ -1,8 +1,10 @@
 <?php
 
 /**
- * For the full copyright and license information, please view the LICENSE
- * file that was distributed with this source code.
+ * Copyright (c) D3 Data Development (Inh. Thomas Dartsch)
+ *
+ * For the full copyright and license information, please view
+ * the LICENSE file that was distributed with this source code.
  *
  * https://www.d3data.de
  *
@@ -81,7 +83,7 @@ function stopProfile(string $sProfileName): void
  * @throws DebugBarException
  * @return void
  */
-function debugVar($mVar, bool $blToFile = false): void
+function debugVar(mixed $mVar, bool $blToFile = false): void
 {
     if ($blToFile) {
         $out = var_export($mVar, true);
@@ -106,10 +108,9 @@ function debugVar($mVar, bool $blToFile = false): void
             /** @var MessagesCollector $messages */
             $messages = $debugBarComponent->getDebugBar()->getCollector('messages');
             $trace    = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS);
-            //$location = $trace[1]['class'] . '::' . $trace[1]['function']. '(' . $trace[0]['line'] . ')';
             $location = $trace[1]['class'] . '::' . $trace[1]['function'];
             $messages->addMessage($mVar, $location);
-        } catch (UnavailableException $e) {
+        } catch (UnavailableException) {
             dumpVar($mVar, $blToFile);
         }
     }

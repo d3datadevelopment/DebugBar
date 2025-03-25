@@ -1,8 +1,10 @@
 <?php
 
 /**
- * For the full copyright and license information, please view the LICENSE
- * file that was distributed with this source code.
+ * Copyright (c) D3 Data Development (Inh. Thomas Dartsch)
+ *
+ * For the full copyright and license information, please view
+ * the LICENSE file that was distributed with this source code.
  *
  * https://www.d3data.de
  *
@@ -18,9 +20,11 @@ namespace D3\DebugBar\Modules\Core;
 use D3\DebugBar\Application\Component\DebugBarComponent;
 use D3\DebugBar\Application\Models\AvailabilityCheck;
 use D3\DebugBar\Application\Models\DebugBarHandler;
+use D3\DebugBar\Application\Models\Exceptions\UnavailableException;
 use D3\DebugBar\Core\DebugBarExceptionHandler;
 use OxidEsales\Eshop\Core\Exception\StandardException;
 use OxidEsales\Eshop\Core\Registry;
+use ReflectionException;
 use Throwable;
 
 class ShopControl_DebugBar extends ShopControl_DebugBar_parent
@@ -39,8 +43,11 @@ class ShopControl_DebugBar extends ShopControl_DebugBar_parent
     /**
      * @param string|null $controllerKey
      * @param string|null $function
-     * @param array $parameters
-     * @param array $viewsChain
+     * @param array|null $parameters
+     * @param array|null $viewsChain
+     *
+     * @throws UnavailableException
+     * @throws ReflectionException
      */
     public function start($controllerKey = null, $function = null, $parameters = null, $viewsChain = null)
     {
@@ -63,7 +70,9 @@ class ShopControl_DebugBar extends ShopControl_DebugBar_parent
 
     /**
      * @param Throwable $exception
+     *
      * @return void
+     * @throws ReflectionException
      */
     protected function debugBarHandleException(Throwable $exception): void
     {
@@ -73,6 +82,8 @@ class ShopControl_DebugBar extends ShopControl_DebugBar_parent
 
     /**
      * @param StandardException $exception
+     *
+     * @throws ReflectionException
      */
     protected function _handleSystemException($exception)
     {
@@ -81,6 +92,8 @@ class ShopControl_DebugBar extends ShopControl_DebugBar_parent
 
     /**
      * @param StandardException $exception
+     *
+     * @throws ReflectionException
      */
     protected function _handleCookieException($exception)
     {
@@ -89,6 +102,8 @@ class ShopControl_DebugBar extends ShopControl_DebugBar_parent
 
     /**
      * @param StandardException $exception
+     *
+     * @throws ReflectionException
      */
     protected function _handleBaseException($exception)
     {

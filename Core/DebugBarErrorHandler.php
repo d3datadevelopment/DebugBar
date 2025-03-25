@@ -1,8 +1,10 @@
 <?php
 
 /**
- * For the full copyright and license information, please view the LICENSE
- * file that was distributed with this source code.
+ * Copyright (c) D3 Data Development (Inh. Thomas Dartsch)
+ *
+ * For the full copyright and license information, please view
+ * the LICENSE file that was distributed with this source code.
  *
  * https://www.d3data.de
  *
@@ -52,20 +54,14 @@ class DebugBarErrorHandler
             [ $file, $line ] = $smartyTemplate;
         }
 
-        switch ($severity) {
-            case E_CORE_ERROR:
-                throw new CoreErrorException($message, 0, $severity, $file, $line);
-            case E_COMPILE_ERROR:
-                throw new CompileErrorException($message, 0, $severity, $file, $line);
-            case E_USER_ERROR:
-                throw new UserErrorException($message, 0, $severity, $file, $line);
-            case E_PARSE:
-                throw new ParseException($message, 0, $severity, $file, $line);
-            case E_ERROR:
-                throw new ErrorException($message, 0, $severity, $file, $line);
-            default:
-                $this->handleUnregisteredErrorTypes($message, $severity, $file, $line);
-        }
+        throw match ($severity) {
+            E_CORE_ERROR    => new CoreErrorException($message, 0, $severity, $file, $line),
+            E_COMPILE_ERROR => new CompileErrorException($message, 0, $severity, $file, $line),
+            E_USER_ERROR    => new UserErrorException($message, 0, $severity, $file, $line),
+            E_PARSE         => new ParseException($message, 0, $severity, $file, $line),
+            E_ERROR         => new ErrorException($message, 0, $severity, $file, $line),
+            default         => $this->handleUnregisteredErrorTypes($message, $severity, $file, $line),
+        };
     }
 
     /**
@@ -75,7 +71,7 @@ class DebugBarErrorHandler
     protected function getSmartyTemplateLocationFromError(string $messsage): ?array
     {
         if (stristr($messsage, 'Smarty error: [in ')) {
-            $start = strpos($messsage, '[')+1;
+            $start = strpos($messsage, '[') + 1;
             $end = strpos($messsage, ']');
             $parts = explode(' ', substr($messsage, $start, $end - $start));
             return [Registry::getConfig()->getTemplateDir(isAdmin()).$parts[1], (int) $parts[3]];

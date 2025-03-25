@@ -40,5 +40,8 @@
     "psr-4": {
       "D3\\DebugBar\\": ""
     }
+  },
+  "scripts": {
+    "php-cs-fixer": "./vendor/bin/php-cs-fixer fix --config=vendor/d3/oxid-debugbar/.php-cs-fixer.php"
   }
 }
