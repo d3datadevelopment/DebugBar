@@ -72,9 +72,10 @@ class OxidConfigCollector extends DataCollector implements Renderable
 
         foreach ($shopConfiguration->getModuleConfigurations() as $moduleConfiguration) {
             foreach ($moduleConfiguration->getModuleSettings() as $setting) {
-                $moduleSettings[$moduleConfiguration->getId()][$setting->getName()] = $setting->getType() == 'hidden' ?
-                    self::HIDDEN_TEXT :
-                    $setting->getValue();
+                $moduleSettings[$moduleConfiguration->getId()][$setting->getName()] =
+                    strtolower($setting->getType()) == 'password' ?
+                        self::HIDDEN_TEXT :
+                        $setting->getValue();
             }
         }
 
